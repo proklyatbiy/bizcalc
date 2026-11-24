@@ -19,6 +19,14 @@ button{font:inherit;cursor:pointer}.mode{border:1px solid var(--line);background
 input{width:100%;padding:14px;border:1px solid #354a67;border-radius:11px;background:#0c1728;color:white;font:inherit;font-size:16px;outline:none}
 input:focus{border-color:var(--blue)}.result{margin-top:19px;padding:16px;border-radius:13px;background:#102b2a;border:1px solid #24594c}
 .result small{color:#a8c9bc}.value{font-size:27px;font-weight:800;color:var(--green);margin-top:4px;overflow-wrap:anywhere}.hint{font-size:12px;color:#a7b9ca;margin-top:5px}
+
+.history-item{border:1px solid var(--line);background:#101c2d;border-radius:12px;padding:12px}
+.history-item-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.history-item strong{display:block;font-size:14px}
+.history-item .hint{margin-top:4px}
+.history-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.history-actions button{border:1px solid var(--line);background:#17263b;color:var(--txt);border-radius:9px;padding:8px 10px;font-size:13px}
+.history-actions button:active,.mode:active{opacity:.8}
 @media(min-width:560px){.modes{grid-template-columns:repeat(3,1fr)}main{padding-top:32px}}
 </style>
 </head>
@@ -80,6 +88,17 @@ input:focus{border-color:var(--blue)}.result{margin-top:19px;padding:16px;border
   <div class="field"><label for="delivery">Доставка и дополнительные расходы, ₽</label><input id="delivery" type="number" inputmode="decimal" value="5000"></div>
   <div class="result"><small>Себестоимость одной единицы</small><div class="value" id="unitValue">550 ₽</div><div class="hint" id="batchHint">Полная стоимость партии: 55 000 ₽</div></div>
  </section>
+
+ <section class="panel history-panel" style="margin-top:16px">
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+   <div><h2>История расчётов</h2><div class="sub" style="margin:5px 0 0">Сохранённые результаты на этом устройстве</div></div>
+   <button type="button" id="saveCalculation" class="mode" style="background:#23395a;border-color:#83adff;color:white">Сохранить расчёт</button>
+  </div>
+  <div id="historyStatus" class="hint" aria-live="polite" style="margin-top:12px">Пока нет сохранённых расчётов.</div>
+  <div id="historyList" style="display:grid;gap:10px;margin-top:12px"></div>
+  <button type="button" id="clearHistory" class="mode" style="margin-top:12px;width:100%" hidden>Очистить историю</button>
+ </section>
+
  <p style="font-size:12px;margin-top:22px">Расчёты справочные. Налоги, комиссии и другие расходы учитывай отдельно.</p>
 </main>
 <script>
@@ -117,6 +136,66 @@ document.addEventListener('DOMContentLoaded', function(){
  });
  document.querySelectorAll('input').forEach(function(input){input.addEventListener('input',calculate)});
  choose('profit');calculate();
+
+ var historyKey='bizcalc_history_v1';
+ var modeNames={profit:'Прибыль',margin:'Маржа',markup:'Наценка','break':'Безубыточность',payback:'Окупаемость',batch:'Стоимость партии'};
+ var inputIds=['revenue','costs','other','mRevenue','mProfit','purchase','markup','fixed','variable','investment','monthly','quantity','batchCost','delivery'];
+ function readHistory(){
+  try{var data=JSON.parse(localStorage.getItem(historyKey)||'[]');return Array.isArray(data)?data:[]}
+  catch(e){return []}
+ }
+ function writeHistory(items){
+  try{localStorage.setItem(historyKey,JSON.stringify(items));return true}
+  catch(e){put('historyStatus','Не удалось сохранить историю. Возможно, хранилище браузера недоступно.');return false}
+ }
+ function currentResult(mode){
+  var values={};
+  inputIds.forEach(function(id){var node=el(id);if(node)values[id]=node.value});
+  var result='';
+  if(mode==='profit')result=el('profitValue').textContent;
+  else if(mode==='margin')result=el('marginValue').textContent;
+  else if(mode==='markup')result=el('salePrice').textContent;
+  else if(mode==='break')result=el('breakValue').textContent;
+  else if(mode==='payback')result=el('paybackValue').textContent;
+  else if(mode==='batch')result=el('unitValue').textContent;
+  return {id:String(Date.now())+'_'+Math.random().toString(36).slice(2,8),mode:mode,values:values,result:result,date:new Date().toISOString()};
+ }
+ function renderHistory(){
+  var items=readHistory(),list=el('historyList'),status=el('historyStatus'),clear=el('clearHistory');
+  list.textContent='';
+  status.textContent=items.length?'Сохранено расчётов: '+items.length:'Пока нет сохранённых расчётов.';
+  clear.hidden=!items.length;
+  items.slice().reverse().forEach(function(item){
+   var card=document.createElement('div');card.className='history-item';
+   var top=document.createElement('div');top.className='history-item-top';
+   var info=document.createElement('div');
+   var title=document.createElement('strong');title.textContent=modeNames[item.mode]||'Расчёт';
+   var value=document.createElement('div');value.className='value';value.style.fontSize='20px';value.textContent=item.result||'—';
+   var date=document.createElement('div');date.className='hint';
+   var d=new Date(item.date);date.textContent=Number.isNaN(d.getTime())?'Дата неизвестна':d.toLocaleString('ru-RU');
+   info.appendChild(title);info.appendChild(value);info.appendChild(date);top.appendChild(info);card.appendChild(top);
+   var actions=document.createElement('div');actions.className='history-actions';
+   var restore=document.createElement('button');restore.type='button';restore.textContent='Открыть расчёт';
+   restore.addEventListener('click',function(){
+    inputIds.forEach(function(id){var node=el(id);if(node&&Object.prototype.hasOwnProperty.call(item.values||{},id))node.value=item.values[id]});
+    choose(item.mode);calculate();window.scrollTo({top:0,behavior:'smooth'});
+   });
+   var remove=document.createElement('button');remove.type='button';remove.textContent='Удалить';
+   remove.addEventListener('click',function(){writeHistory(readHistory().filter(function(x){return x.id!==item.id}));renderHistory()});
+   actions.appendChild(restore);actions.appendChild(remove);card.appendChild(actions);list.appendChild(card);
+  });
+ }
+ el('saveCalculation').addEventListener('click',function(){
+  var mode='profit';
+  document.querySelectorAll('[data-mode]').forEach(function(button){if(button.getAttribute('aria-pressed')==='true')mode=button.getAttribute('data-mode')});
+  var items=readHistory();items.push(currentResult(mode));
+  if(writeHistory(items)){put('historyStatus','Расчёт сохранён.');renderHistory()}
+ });
+ el('clearHistory').addEventListener('click',function(){
+  if(window.confirm('Удалить всю историю расчётов?')){writeHistory([]);renderHistory()}
+ });
+ renderHistory();
+
 });
 </script>
 </body>
