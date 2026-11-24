@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b1220">
+<title>BizCalc — бизнес-калькуляторы</title>
+<style>
+:root{color-scheme:dark;--bg:#0b1220;--panel:#142238;--line:#293b55;--txt:#edf4ff;--muted:#9eafc7;--blue:#83adff;--green:#62dfaa}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--txt);font:16px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+main{max-width:720px;margin:auto;padding:22px 16px 50px}.brand{font-size:21px;font-weight:800;margin-bottom:26px}.brand b{display:inline-grid;place-items:center;width:36px;height:36px;margin-right:8px;border-radius:11px;background:linear-gradient(135deg,#83bdff,#9a85ff);color:#101a2a}
+h1{font-size:32px;line-height:1.1;margin:0 0 9px;letter-spacing:-1px}p{color:var(--muted);line-height:1.5}.modes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:22px 0 12px}
+button{font:inherit;cursor:pointer}.mode{border:1px solid var(--line);background:#111e31;color:#c2d0e4;border-radius:12px;padding:13px 9px;font-size:14px;font-weight:650}
+.mode[aria-pressed="true"]{background:#23395a;border-color:var(--blue);color:white}
+#description{font-size:13px;min-height:40px;margin:8px 0 16px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:19px}
+.panel[hidden]{display:none!important}.panel h2{font-size:19px;margin:0 0 5px}.sub{font-size:13px;color:var(--muted);margin-bottom:18px}
+.field{margin:14px 0}.field label{display:block;font-size:13px;color:#c0cde0;margin-bottom:7px}
+input{width:100%;padding:14px;border:1px solid #354a67;border-radius:11px;background:#0c1728;color:white;font:inherit;font-size:16px;outline:none}
+input:focus{border-color:var(--blue)}.result{margin-top:19px;padding:16px;border-radius:13px;background:#102b2a;border:1px solid #24594c}
+.result small{color:#a8c9bc}.value{font-size:27px;font-weight:800;color:var(--green);margin-top:4px;overflow-wrap:anywhere}.hint{font-size:12px;color:#a7b9ca;margin-top:5px}
+@media(min-width:560px){.modes{grid-template-columns:repeat(3,1fr)}main{padding-top:32px}}
+</style>
+</head>
+<body>
+<main>
+ <div class="brand"><b>B</b>BizCalc</div>
+ <h1>Бизнес-калькуляторы</h1>
+ <p>Выбери нужный расчёт. Результат обновляется автоматически при вводе данных.</p>
+ <nav class="modes" aria-label="Выбор калькулятора">
+  <button class="mode" type="button" data-mode="profit" aria-pressed="true">Прибыль</button>
+  <button class="mode" type="button" data-mode="margin" aria-pressed="false">Маржа</button>
+  <button class="mode" type="button" data-mode="markup" aria-pressed="false">Наценка</button>
+  <button class="mode" type="button" data-mode="break" aria-pressed="false">Безубыточность</button>
+  <button class="mode" type="button" data-mode="payback" aria-pressed="false">Окупаемость</button>
+  <button class="mode" type="button" data-mode="batch" aria-pressed="false">Стоимость партии</button>
+ </nav>
+ <p id="description">Выручка минус себестоимость и прочие расходы.</p>
+
+ <section class="panel" data-panel="profit">
+  <h2>Чистая прибыль</h2><div class="sub">Доходы минус расходы</div>
+  <div class="field"><label for="revenue">Выручка, ₽</label><input id="revenue" type="number" inputmode="decimal" value="250000"></div>
+  <div class="field"><label for="costs">Себестоимость и закупки, ₽</label><input id="costs" type="number" inputmode="decimal" value="120000"></div>
+  <div class="field"><label for="other">Прочие расходы, ₽</label><input id="other" type="number" inputmode="decimal" value="25000"></div>
+  <div class="result"><small>Чистая прибыль</small><div class="value" id="profitValue">105 000 ₽</div><div class="hint" id="profitHint">Маржа: 42%</div></div>
+ </section>
+
+ <section class="panel" data-panel="margin" hidden>
+  <h2>Маржинальность</h2><div class="sub">Доля прибыли в выручке</div>
+  <div class="field"><label for="mRevenue">Выручка, ₽</label><input id="mRevenue" type="number" inputmode="decimal" value="250000"></div>
+  <div class="field"><label for="mProfit">Прибыль, ₽</label><input id="mProfit" type="number" inputmode="decimal" value="75000"></div>
+  <div class="result"><small>Маржа</small><div class="value" id="marginValue">30%</div><div class="hint">Прибыль / выручка × 100%</div></div>
+ </section>
+
+ <section class="panel" data-panel="markup" hidden>
+  <h2>Наценка</h2><div class="sub">Расчёт цены продажи по себестоимости</div>
+  <div class="field"><label for="purchase">Себестоимость единицы, ₽</label><input id="purchase" type="number" inputmode="decimal" value="800"></div>
+  <div class="field"><label for="markup">Наценка, %</label><input id="markup" type="number" inputmode="decimal" value="40"></div>
+  <div class="result"><small>Цена продажи</small><div class="value" id="salePrice">1 120 ₽</div><div class="hint" id="markupHint">Прибыль с единицы: 320 ₽</div></div>
+ </section>
+
+ <section class="panel" data-panel="break" hidden>
+  <h2>Точка безубыточности</h2><div class="sub">Минимальная выручка без убытка</div>
+  <div class="field"><label for="fixed">Постоянные расходы, ₽</label><input id="fixed" type="number" inputmode="decimal" value="100000"></div>
+  <div class="field"><label for="variable">Переменные расходы, % от выручки</label><input id="variable" type="number" inputmode="decimal" value="55"></div>
+  <div class="result"><small>Выручка для выхода в ноль</small><div class="value" id="breakValue">222 222 ₽</div><div class="hint" id="breakHint">Маржинальный доход: 45%</div></div>
+ </section>
+
+ <section class="panel" data-panel="payback" hidden>
+  <h2>Окупаемость</h2><div class="sub">Срок возврата вложений</div>
+  <div class="field"><label for="investment">Первоначальные вложения, ₽</label><input id="investment" type="number" inputmode="decimal" value="300000"></div>
+  <div class="field"><label for="monthly">Чистый денежный поток в месяц, ₽</label><input id="monthly" type="number" inputmode="decimal" value="50000"></div>
+  <div class="result"><small>Срок окупаемости</small><div class="value" id="paybackValue">6 мес.</div><div class="hint" id="paybackHint">При сохранении текущего потока</div></div>
+ </section>
+
+ <section class="panel" data-panel="batch" hidden>
+  <h2>Стоимость партии</h2><div class="sub">Закупка, доставка и цена единицы</div>
+  <div class="field"><label for="quantity">Количество единиц</label><input id="quantity" type="number" inputmode="decimal" value="100"></div>
+  <div class="field"><label for="batchCost">Стоимость закупки, ₽</label><input id="batchCost" type="number" inputmode="decimal" value="50000"></div>
+  <div class="field"><label for="delivery">Доставка и дополнительные расходы, ₽</label><input id="delivery" type="number" inputmode="decimal" value="5000"></div>
+  <div class="result"><small>Себестоимость одной единицы</small><div class="value" id="unitValue">550 ₽</div><div class="hint" id="batchHint">Полная стоимость партии: 55 000 ₽</div></div>
+ </section>
+ <p style="font-size:12px;margin-top:22px">Расчёты справочные. Налоги, комиссии и другие расходы учитывай отдельно.</p>
+</main>
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+ 'use strict';
+ var descriptions={
+  profit:'Выручка минус себестоимость и прочие расходы.',
+  margin:'Узнай, какая часть выручки остаётся в виде прибыли.',
+  markup:'Рассчитай цену продажи на основе себестоимости и наценки.',
+  'break':'Определи минимальную выручку для покрытия постоянных расходов.',
+  payback:'Оцени, за сколько месяцев вернутся первоначальные вложения.',
+  batch:'Посчитай полную стоимость закупки и себестоимость одной единицы.'
+ };
+ function el(id){return document.getElementById(id)}
+ function n(id){var node=el(id);if(!node)return 0;var x=parseFloat(String(node.value).replace(',','.'));return Number.isFinite(x)?x:0}
+ function money(x){return Number.isFinite(x)?x.toLocaleString('ru-RU',{maximumFractionDigits:2})+' ₽':'—'}
+ function percent(x){return Number.isFinite(x)?x.toLocaleString('ru-RU',{maximumFractionDigits:2})+'%':'—'}
+ function put(id,value){el(id).textContent=value}
+ function calculate(){
+  var rev=n('revenue'), profit=rev-n('costs')-n('other');
+  put('profitValue',money(profit));put('profitHint','Маржа: '+(rev>0?percent(profit/rev*100):'—'));
+  var mr=n('mRevenue');put('marginValue',mr>0?percent(n('mProfit')/mr*100):'—');
+  var price=n('purchase')*(1+n('markup')/100);put('salePrice',money(price));put('markupHint','Прибыль с единицы: '+money(price-n('purchase')));
+  var contribution=1-n('variable')/100;put('breakValue',contribution>0?money(n('fixed')/contribution):'Не рассчитывается');put('breakHint',contribution>0?'Маржинальный доход: '+percent(contribution*100):'Переменные расходы должны быть меньше 100%');
+  var monthly=n('monthly');put('paybackValue',monthly>0?(n('investment')/monthly).toLocaleString('ru-RU',{maximumFractionDigits:1})+' мес.':'Не рассчитывается');
+  var total=n('batchCost')+n('delivery'), qty=n('quantity');put('unitValue',qty>0?money(total/qty):'Не рассчитывается');put('batchHint','Полная стоимость партии: '+money(total));
+ }
+ function choose(mode){
+  document.querySelectorAll('[data-panel]').forEach(function(panel){panel.hidden=panel.getAttribute('data-panel')!==mode});
+  document.querySelectorAll('[data-mode]').forEach(function(button){button.setAttribute('aria-pressed',String(button.getAttribute('data-mode')===mode))});
+  put('description',descriptions[mode]||'');
+ }
+ document.querySelectorAll('[data-mode]').forEach(function(button){
+  button.addEventListener('click',function(){choose(button.getAttribute('data-mode'))});
+ });
+ document.querySelectorAll('input').forEach(function(input){input.addEventListener('input',calculate)});
+ choose('profit');calculate();
+});
+</script>
+</body>
+</html>
