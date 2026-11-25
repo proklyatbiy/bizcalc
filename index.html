@@ -1,726 +1,600 @@
 
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#0b1220">
-<title>BizCalc 1.4 — бизнес-калькуляторы</title>
+<title>BizCalc — бизнес-калькуляторы</title>
 <style>
-:root{color-scheme:dark;--bg:#0b1220;--panel:#142238;--line:#293b55;--txt:#edf4ff;--muted:#9eafc7;--blue:#83adff;--green:#62dfaa}
+:root{
+ --bg:#0b1220;--panel:#142238;--line:#293b55;
+ --txt:#edf4ff;--muted:#9eafc7;--blue:#83adff;--green:#62dfaa;
+}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--txt);font:16px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
-main{max-width:720px;margin:auto;padding:18px 14px 90px}
-.brand{font-size:21px;font-weight:800;margin-bottom:19px}
-.brand b{display:inline-grid;place-items:center;width:34px;height:34px;margin-right:8px;border-radius:11px;background:linear-gradient(135deg,#83bdff,#9a85ff);color:#101a2a}
-h1{font-size:29px;line-height:1.1;margin:0 0 8px;letter-spacing:-1px}
-p{color:var(--muted);line-height:1.45}
-.modes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:16px 0 10px}
-button{font:inherit;cursor:pointer}
-.mode{border:1px solid var(--line);background:#111e31;color:#c2d0e4;border-radius:11px;padding:11px 8px;font-size:13px;font-weight:650}
-.mode[aria-pressed="true"]{background:#23395a;border-color:var(--blue);color:white}
-#description{font-size:13px;min-height:20px;margin:7px 0 12px}
-.panel{background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:15px}
-.panel[hidden],.extra-panel[hidden]{display:none!important}
-.panel h2,.extra-panel h2{font-size:18px;margin:0 0 5px}
-.sub{font-size:13px;color:var(--muted);margin-bottom:13px}
-.field{margin:11px 0}
+body{margin:0;background:var(--bg);color:var(--txt);font:15px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+button,input,select{font:inherit}
+button{cursor:pointer}
+header{max-width:1440px;margin:auto;padding:20px 24px 12px}
+.brand{font-size:23px;font-weight:800;letter-spacing:-.5px}
+.brand b{display:inline-grid;place-items:center;width:35px;height:35px;margin-right:8px;border-radius:11px;background:linear-gradient(135deg,#83bdff,#9a85ff);color:#101a2a}
+main{max-width:1440px;margin:auto;padding:10px 24px 35px}
+.layout{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(350px,.85fr);gap:18px;align-items:start}
+.left-column,.right-column{min-width:0}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:17px}
+.panel h2{font-size:18px;margin:0 0 5px}
+.sub{font-size:13px;color:var(--muted);margin-bottom:13px;line-height:1.4}
+h1{font-size:27px;letter-spacing:-.7px;margin:0 0 7px}
+.intro{color:var(--muted);font-size:13px;margin:0 0 15px}
+.mode-picker{position:relative;margin-bottom:12px}
+.mode-picker summary{list-style:none;cursor:pointer;padding:13px 15px;border:1px solid var(--line);background:#17263b;border-radius:11px;font-weight:650;display:flex;justify-content:space-between;align-items:center}
+.mode-picker summary::-webkit-details-marker{display:none}
+.mode-picker summary:after{content:"⌄";font-size:18px;color:var(--blue)}
+.mode-picker[open] summary{border-color:var(--blue);border-radius:11px 11px 0 0}
+.mode-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;padding:10px;background:#101c2d;border:1px solid var(--blue);border-top:0;border-radius:0 0 11px 11px}
+.mode{border:1px solid var(--line);background:#142238;color:#c2d0e4;border-radius:9px;padding:10px 7px;font-size:12px;font-weight:650}
+.mode.active{background:#23395a;border-color:var(--blue);color:white}
+#description{font-size:13px;color:var(--muted);margin:0 0 12px;min-height:18px}
+.field{margin:12px 0}
 .field label{display:block;font-size:13px;color:#c0cde0;margin-bottom:6px}
-input,select{width:100%;padding:11px;border:1px solid #354a67;border-radius:10px;background:#0c1728;color:white;font:inherit;font-size:16px;outline:none}
+input,select{width:100%;padding:11px;border:1px solid #354a67;border-radius:10px;background:#0c1728;color:white;font-size:16px;outline:none}
 input:focus,select:focus{border-color:var(--blue)}
-.result{margin-top:15px;padding:13px;border-radius:12px;background:#102b2a;border:1px solid #24594c}
-.result small{color:#a8c9bc}
-.value{font-size:25px;font-weight:800;color:var(--green);margin-top:4px;overflow-wrap:anywhere}
-.hint{font-size:12px;color:#a7b9ca;margin-top:5px}
-.save-row{display:grid;grid-template-columns:1fr auto;gap:8px;margin-top:10px}
-.save-row input{min-width:0}
-.save-row button{white-space:nowrap}
-.extra-panel{background:#142238;border:1px solid #293b55;border-radius:15px;padding:15px;margin:14px 0}
-.dashboard{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:13px 0}
-.stat{background:#142238;border:1px solid #293b55;border-radius:12px;padding:11px}
-.stat small{display:block;color:#9eafc7;font-size:11px}
+.result{margin-top:15px;padding:14px;border-radius:12px;background:#102b2a;border:1px solid #24594c}
+.result small{color:#a8c9bc;font-size:12px}
+.value{font-size:26px;font-weight:800;color:var(--green);margin-top:5px;overflow-wrap:anywhere}
+.hint{font-size:12px;color:#a7b9ca;margin-top:5px;line-height:1.4}
+.save-row{display:grid;grid-template-columns:1fr auto;gap:8px;margin-top:12px}
+.primary{border:1px solid var(--blue);background:#23395a;color:white;border-radius:10px;padding:11px 15px;font-weight:650}
+.save-status{font-size:12px;color:var(--green);margin-top:8px;min-height:15px}
+.right-column{display:grid;gap:14px}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:13px 0}
+.stat{background:#101c2d;border:1px solid var(--line);border-radius:11px;padding:11px}
+.stat small{display:block;color:var(--muted);font-size:11px}
 .stat strong{display:block;font-size:22px;margin-top:5px}
-#recentCalculations{display:grid;gap:8px}
-.mini-item{border:1px solid #293b55;background:#101c2d;border-radius:10px;padding:10px}
-.mini-item strong{display:block;font-size:13px}
-.mini-item .hint{margin-top:3px}
-.extra-actions{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
-.extra-actions button,.compare-controls button{border:1px solid #354a67;background:#17263b;color:#edf4ff;border-radius:10px;padding:9px 11px}
-.history-item{border:1px solid var(--line);background:#101c2d;border-radius:11px;padding:11px}
-.history-item-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
-.history-item strong{display:block;font-size:14px}
-.history-item .hint{margin-top:4px}
+.recent-list{display:grid;gap:8px;margin-top:12px}
+.mini-item{background:#101c2d;border:1px solid var(--line);border-radius:10px;padding:11px}
+.mini-item strong{font-size:13px;display:block}
+.mini-item .value{font-size:18px;margin-top:4px}
+.mini-item .hint{margin-top:4px}
+.text-button{border:1px solid var(--line);background:#17263b;color:var(--txt);border-radius:9px;padding:9px 12px;font-size:12px}
+.history-page{display:none}
+.history-page.active{display:block}
+.history-search{margin:12px 0}
+.history-list{display:grid;gap:10px;margin-top:12px}
+.history-item{background:#101c2d;border:1px solid var(--line);border-radius:12px;padding:13px}
+.history-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.history-title{font-size:15px;font-weight:700}
+.history-type{font-size:12px;color:var(--blue);margin-top:4px}
+.history-date{font-size:11px;color:var(--muted);margin-top:4px}
+.history-result{margin-top:11px;padding:11px;border-radius:10px;background:#102b2a;border:1px solid #24594c}
+.history-result small{font-size:11px;color:#a8c9bc}
+.history-result strong{display:block;color:var(--green);font-size:21px;margin-top:4px}
+.history-result .hint{color:#b7c8c2}
 .history-details{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:10px}
-.detail{background:#142238;border:1px solid #293b55;border-radius:9px;padding:8px}
+.detail{padding:9px;background:#142238;border:1px solid var(--line);border-radius:9px;min-width:0}
 .detail small{display:block;color:var(--muted);font-size:11px}
-.detail span{display:block;font-size:13px;font-weight:650;margin-top:3px;overflow-wrap:anywhere}
-.history-actions{display:flex;gap:7px;margin-top:10px;flex-wrap:wrap}
-.history-actions button{border:1px solid var(--line);background:#17263b;color:var(--txt);border-radius:9px;padding:8px 10px;font-size:12px}
-.compare-controls{display:grid;gap:9px}
-.compare-controls label{font-size:13px;color:#c0cde0}
-.compare-controls select{margin-top:5px}
-.compare-result{margin-top:11px;padding:12px;border-radius:11px;background:#102b2a;border:1px solid #24594c}
-.compare-result strong{display:block;margin-bottom:5px}
-.bottom-nav{display:flex;justify-content:center;gap:8px;margin:18px 0}
-.bottom-nav button{border:1px solid #293b55;background:#142238;color:#c2d0e4;border-radius:11px;padding:10px 17px;font-size:13px;font-weight:650}
-.bottom-nav button[aria-current="page"]{border-color:#83adff;background:#23395a;color:white}
-@media(min-width:560px){.modes{grid-template-columns:repeat(3,1fr)}main{padding-top:25px}}
-@media(max-width:600px){
- main{padding:16px 12px 95px}
- .panel{padding:13px}
- .dashboard{gap:6px}
- .stat{padding:9px}
- .stat strong{font-size:20px}
- .bottom-nav{position:fixed;z-index:20;left:0;right:0;bottom:0;display:grid;grid-template-columns:repeat(3,1fr);gap:7px;padding:8px 12px calc(8px + env(safe-area-inset-bottom));margin:0;background:rgba(11,18,32,.96);border-top:1px solid #293b55;backdrop-filter:blur(14px)}
- .bottom-nav button{padding:10px 5px;font-size:12px}
+.detail span{display:block;font-size:13px;font-weight:650;margin-top:4px;overflow-wrap:anywhere}
+.history-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:11px}
+.history-actions button{border:1px solid var(--line);background:#17263b;color:var(--txt);border-radius:9px;padding:8px 11px;font-size:12px}
+.history-toolbar{display:flex;gap:8px;flex-wrap:wrap}
+.desktop-history{margin-top:14px}
+.mobile-overview{display:none}
+.bottom-nav{display:none}
+.empty{color:var(--muted);font-size:13px;padding:12px 0}
+@media(max-width:760px){
+ header{padding:15px 13px 8px}
+ main{padding:8px 12px 90px}
+ .layout{display:block}
+ .right-column{display:block;margin-top:14px}
+ .right-column .panel{margin-bottom:12px}
+ .desktop-history{display:none}
+ .mobile-overview{display:block}
+ .mode-options{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .mode-picker{margin-bottom:10px}
  .save-row{grid-template-columns:1fr}
  .save-row button{width:100%}
+ .bottom-nav{position:fixed;z-index:20;left:0;right:0;bottom:0;display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:9px 12px calc(9px + env(safe-area-inset-bottom));background:rgba(11,18,32,.97);border-top:1px solid var(--line);backdrop-filter:blur(14px)}
+ .bottom-nav button{padding:12px;border:1px solid var(--line);background:#142238;color:#c2d0e4;border-radius:10px;font-weight:650}
+ .bottom-nav button.active{border-color:var(--blue);background:#23395a;color:white}
+ .history-page{padding-bottom:20px}
+}
+@media(min-width:761px){
+ .mobile-overview{display:none}
 }
 </style>
 </head>
 <body>
+<header><div class="brand"><b>B</b>BizCalc</div></header>
+
 <main>
- <div class="brand"><b>B</b>BizCalc <span style="font-size:12px;color:#9eafc7;font-weight:500">1.4</span></div>
+<div id="calculatorPage">
+ <div class="layout">
+  <section class="left-column">
+   <h1>Калькуляторы</h1>
+   <p class="intro">Выбери инструмент и рассчитай нужные показатели.</p>
 
- <section id="dashboardPage" class="extra-panel">
-  <h2>Обзор BizCalc</h2>
-  <div class="dashboard">
-   <div class="stat"><small>Всего расчётов</small><strong id="statTotal">0</strong></div>
-   <div class="stat"><small>За 7 дней</small><strong id="statWeek">0</strong></div>
-   <div class="stat"><small>Калькуляторов</small><strong>11</strong></div>
+   <details class="mode-picker" id="modePicker">
+    <summary id="modeSummary">Прибыль</summary>
+    <div class="mode-options">
+     <button class="mode active" data-mode="profit">Прибыль</button>
+     <button class="mode" data-mode="margin">Маржа</button>
+     <button class="mode" data-mode="markup">Наценка</button>
+     <button class="mode" data-mode="break">Безубыточность</button>
+     <button class="mode" data-mode="payback">Окупаемость</button>
+     <button class="mode" data-mode="batch">Стоимость партии</button>
+     <button class="mode" data-mode="discount">Скидка</button>
+     <button class="mode" data-mode="commission">Комиссия</button>
+     <button class="mode" data-mode="vat">НДС</button>
+     <button class="mode" data-mode="roi">Рентабельность</button>
+     <button class="mode" data-mode="ads">Реклама</button>
+    </div>
+   </details>
+
+   <p id="description">Выручка минус себестоимость и прочие расходы.</p>
+
+   <section class="panel" data-panel="profit">
+    <h2>Чистая прибыль</h2><div class="sub">Выручка за вычетом затрат</div>
+    <div class="field"><label for="revenue">Выручка, ₽</label><input id="revenue" type="number" value="250000"></div>
+    <div class="field"><label for="costs">Себестоимость и закупки, ₽</label><input id="costs" type="number" value="120000"></div>
+    <div class="field"><label for="other">Прочие расходы, ₽</label><input id="other" type="number" value="25000"></div>
+    <div class="result"><small>Чистая прибыль</small><div class="value" id="profitValue"></div><div class="hint" id="profitHint"></div></div>
+   </section>
+
+   <section class="panel" data-panel="margin" hidden>
+    <h2>Маржинальность</h2><div class="sub">Доля прибыли в выручке</div>
+    <div class="field"><label for="mRevenue">Выручка, ₽</label><input id="mRevenue" type="number" value="250000"></div>
+    <div class="field"><label for="mProfit">Прибыль, ₽</label><input id="mProfit" type="number" value="75000"></div>
+    <div class="result"><small>Маржинальность</small><div class="value" id="marginValue"></div><div class="hint">Прибыль относительно выручки</div></div>
+   </section>
+
+   <section class="panel" data-panel="markup" hidden>
+    <h2>Наценка</h2><div class="sub">Цена продажи на основе себестоимости</div>
+    <div class="field"><label for="purchase">Себестоимость единицы, ₽</label><input id="purchase" type="number" value="800"></div>
+    <div class="field"><label for="markup">Наценка, %</label><input id="markup" type="number" value="40"></div>
+    <div class="result"><small>Цена продажи</small><div class="value" id="salePrice"></div><div class="hint" id="markupHint"></div></div>
+   </section>
+
+   <section class="panel" data-panel="break" hidden>
+    <h2>Точка безубыточности</h2><div class="sub">Выручка, необходимая для покрытия расходов</div>
+    <div class="field"><label for="fixed">Постоянные расходы, ₽</label><input id="fixed" type="number" value="100000"></div>
+    <div class="field"><label for="variable">Переменные расходы, % от выручки</label><input id="variable" type="number" value="55"></div>
+    <div class="result"><small>Выручка для выхода в ноль</small><div class="value" id="breakValue"></div><div class="hint" id="breakHint"></div></div>
+   </section>
+
+   <section class="panel" data-panel="payback" hidden>
+    <h2>Окупаемость</h2><div class="sub">Срок возврата вложений</div>
+    <div class="field"><label for="investment">Первоначальные вложения, ₽</label><input id="investment" type="number" value="300000"></div>
+    <div class="field"><label for="monthly">Денежный поток в месяц, ₽</label><input id="monthly" type="number" value="50000"></div>
+    <div class="result"><small>Срок окупаемости</small><div class="value" id="paybackValue"></div><div class="hint">При сохранении текущего денежного потока</div></div>
+   </section>
+
+   <section class="panel" data-panel="batch" hidden>
+    <h2>Стоимость партии</h2><div class="sub">Полная стоимость закупки и единицы товара</div>
+    <div class="field"><label for="quantity">Количество единиц</label><input id="quantity" type="number" value="100"></div>
+    <div class="field"><label for="batchCost">Стоимость закупки, ₽</label><input id="batchCost" type="number" value="50000"></div>
+    <div class="field"><label for="delivery">Доставка и дополнительные расходы, ₽</label><input id="delivery" type="number" value="5000"></div>
+    <div class="result"><small>Себестоимость одной единицы</small><div class="value" id="unitValue"></div><div class="hint" id="batchHint"></div></div>
+   </section>
+
+   <section class="panel" data-panel="discount" hidden>
+    <h2>Расчёт скидки</h2><div class="sub">Цена после скидки и экономия</div>
+    <div class="field"><label for="discountPrice">Исходная цена, ₽</label><input id="discountPrice" type="number" value="5000"></div>
+    <div class="field"><label for="discountPercent">Скидка, %</label><input id="discountPercent" type="number" value="15"></div>
+    <div class="field"><label for="discountQty">Количество товаров</label><input id="discountQty" type="number" value="1"></div>
+    <div class="result"><small>Цена после скидки</small><div class="value" id="discountValue"></div><div class="hint" id="discountHint"></div></div>
+   </section>
+
+   <section class="panel" data-panel="commission" hidden>
+    <h2>Комиссия</h2><div class="sub">Сумма после удержания комиссии</div>
+    <div class="field"><label for="commissionRevenue">Сумма продажи, ₽</label><input id="commissionRevenue" type="number" value="10000"></div>
+    <div class="field"><label for="commissionPercent">Процент комиссии, %</label><input id="commissionPercent" type="number" value="5"></div>
+    <div class="field"><label for="commissionExtra">Дополнительные расходы, ₽</label><input id="commissionExtra" type="number" value="200"></div>
+    <div class="result"><small>Останется после удержаний</small><div class="value" id="commissionValue"></div><div class="hint" id="commissionHint"></div></div>
+   </section>
+
+   <section class="panel" data-panel="vat" hidden>
+    <h2>Калькулятор НДС</h2><div class="sub">Начисление или выделение налога</div>
+    <div class="field"><label for="vatAmount">Сумма, ₽</label><input id="vatAmount" type="number" value="10000"></div>
+    <div class="field"><label for="vatRate">Ставка НДС, %</label><input id="vatRate" type="number" value="20"></div>
+    <div class="field"><label for="vatMode">Тип расчёта</label><select id="vatMode"><option value="add">Начислить НДС сверху</option><option value="extract">Выделить НДС из суммы</option></select></div>
+    <div class="result"><small>Сумма НДС</small><div class="value" id="vatValue"></div><div class="hint" id="vatHint"></div></div>
+   </section>
+
+   <section class="panel" data-panel="roi" hidden>
+    <h2>Рентабельность затрат</h2><div class="sub">Прибыль относительно затрат</div>
+    <div class="field"><label for="roiProfit">Прибыль, ₽</label><input id="roiProfit" type="number" value="30000"></div>
+    <div class="field"><label for="roiCosts">Затраты, ₽</label><input id="roiCosts" type="number" value="100000"></div>
+    <div class="result"><small>Рентабельность затрат</small><div class="value" id="roiValue"></div><div class="hint">Прибыль относительно затрат</div></div>
+   </section>
+
+   <section class="panel" data-panel="ads" hidden>
+    <h2>Эффективность рекламы</h2><div class="sub">Возврат рекламных расходов и стоимость клиента</div>
+    <div class="field"><label for="adsSpend">Расходы на рекламу, ₽</label><input id="adsSpend" type="number" value="15000"></div>
+    <div class="field"><label for="adsRevenue">Выручка от рекламы, ₽</label><input id="adsRevenue" type="number" value="60000"></div>
+    <div class="field"><label for="adsClients">Количество клиентов</label><input id="adsClients" type="number" value="20"></div>
+    <div class="result"><small>ROAS — возврат рекламных расходов</small><div class="value" id="adsValue"></div><div class="hint" id="adsHint"></div></div>
+   </section>
+
+   <div class="save-row">
+    <input id="calculationLabel" maxlength="70" placeholder="Название расчёта (необязательно)">
+    <button type="button" class="primary" id="saveCalculation">Сохранить расчёт</button>
+   </div>
+   <div class="save-status" id="saveStatus"></div>
+  </section>
+
+  <aside class="right-column">
+   <section class="panel">
+    <h2>Обзор</h2><div class="sub">Твоя статистика BizCalc</div>
+    <div class="stats">
+     <div class="stat"><small>Всего расчётов</small><strong id="statTotal">0</strong></div>
+     <div class="stat"><small>За 7 дней</small><strong id="statWeek">0</strong></div>
+     <div class="stat"><small>Инструментов</small><strong>11</strong></div>
+    </div>
+    <h2 style="font-size:15px;margin-top:16px">Последние расчёты</h2>
+    <div id="recentCalculations" class="recent-list"></div>
+   </section>
+
+   <section class="panel desktop-history">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+     <div><h2>История</h2><div class="sub">Последние сохранённые расчёты</div></div>
+     <button type="button" class="text-button" id="desktopOpenHistory">Вся история</button>
+    </div>
+    <div id="desktopRecent" class="recent-list"></div>
+   </section>
+  </aside>
+ </div>
+
+ <section class="panel mobile-overview" style="margin-top:14px">
+  <h2>Обзор</h2><div class="sub">Твоя статистика BizCalc</div>
+  <div class="stats">
+   <div class="stat"><small>Всего расчётов</small><strong id="mobileStatTotal">0</strong></div>
+   <div class="stat"><small>За 7 дней</small><strong id="mobileStatWeek">0</strong></div>
+   <div class="stat"><small>Инструментов</small><strong>11</strong></div>
   </div>
-  <h2 style="margin-top:15px">Последние расчёты</h2>
-  <div id="recentCalculations" class="hint">Пока нет сохранённых расчётов.</div>
-  <div class="extra-actions">
-   <button type="button" id="openCompare">Сравнить сценарии</button>
-   <button type="button" id="openHistory">Открыть историю</button>
-  </div>
+  <h2 style="font-size:15px">Последние расчёты</h2>
+  <div id="mobileRecent" class="recent-list"></div>
  </section>
+</div>
 
- <section id="calculatorPage" hidden>
-  <h1>Бизнес-калькуляторы</h1>
-  <p>Выбери нужный расчёт. Результат обновляется автоматически.</p>
-
-  <nav class="modes" aria-label="Выбор калькулятора">
-   <button class="mode" type="button" data-mode="profit" aria-pressed="true">Прибыль</button>
-   <button class="mode" type="button" data-mode="margin" aria-pressed="false">Маржа</button>
-   <button class="mode" type="button" data-mode="markup" aria-pressed="false">Наценка</button>
-   <button class="mode" type="button" data-mode="break" aria-pressed="false">Безубыточность</button>
-   <button class="mode" type="button" data-mode="payback" aria-pressed="false">Окупаемость</button>
-   <button class="mode" type="button" data-mode="batch" aria-pressed="false">Стоимость партии</button>
-   <button class="mode" type="button" data-mode="discount" aria-pressed="false">Скидка</button>
-   <button class="mode" type="button" data-mode="commission" aria-pressed="false">Комиссия</button>
-   <button class="mode" type="button" data-mode="vat" aria-pressed="false">НДС</button>
-   <button class="mode" type="button" data-mode="roi" aria-pressed="false">Рентабельность</button>
-   <button class="mode" type="button" data-mode="ads" aria-pressed="false">Реклама</button>
-  </nav>
-
-  <p id="description">Выручка минус себестоимость и прочие расходы.</p>
-
-  <section class="panel" data-panel="profit">
-   <h2>Чистая прибыль</h2><div class="sub">Доходы минус расходы</div>
-   <div class="field"><label for="revenue">Выручка, ₽</label><input id="revenue" type="number" inputmode="decimal" value="250000"></div>
-   <div class="field"><label for="costs">Себестоимость и закупки, ₽</label><input id="costs" type="number" inputmode="decimal" value="120000"></div>
-   <div class="field"><label for="other">Прочие расходы, ₽</label><input id="other" type="number" inputmode="decimal" value="25000"></div>
-   <div class="result"><small>Чистая прибыль</small><div class="value" id="profitValue">105 000 ₽</div><div class="hint" id="profitHint">Маржа: 42%</div></div>
-  </section>
-
-  <section class="panel" data-panel="margin" hidden>
-   <h2>Маржинальность</h2><div class="sub">Доля прибыли в выручке</div>
-   <div class="field"><label for="mRevenue">Выручка, ₽</label><input id="mRevenue" type="number" inputmode="decimal" value="250000"></div>
-   <div class="field"><label for="mProfit">Прибыль, ₽</label><input id="mProfit" type="number" inputmode="decimal" value="75000"></div>
-   <div class="result"><small>Маржа</small><div class="value" id="marginValue">30%</div><div class="hint">Прибыль / выручка × 100%</div></div>
-  </section>
-
-  <section class="panel" data-panel="markup" hidden>
-   <h2>Наценка</h2><div class="sub">Цена продажи по себестоимости</div>
-   <div class="field"><label for="purchase">Себестоимость единицы, ₽</label><input id="purchase" type="number" inputmode="decimal" value="800"></div>
-   <div class="field"><label for="markup">Наценка, %</label><input id="markup" type="number" inputmode="decimal" value="40"></div>
-   <div class="result"><small>Цена продажи</small><div class="value" id="salePrice">1 120 ₽</div><div class="hint" id="markupHint">Прибыль с единицы: 320 ₽</div></div>
-  </section>
-
-  <section class="panel" data-panel="break" hidden>
-   <h2>Точка безубыточности</h2><div class="sub">Минимальная выручка без убытка</div>
-   <div class="field"><label for="fixed">Постоянные расходы, ₽</label><input id="fixed" type="number" inputmode="decimal" value="100000"></div>
-   <div class="field"><label for="variable">Переменные расходы, % от выручки</label><input id="variable" type="number" inputmode="decimal" value="55"></div>
-   <div class="result"><small>Выручка для выхода в ноль</small><div class="value" id="breakValue">222 222 ₽</div><div class="hint" id="breakHint">Маржинальный доход: 45%</div></div>
-  </section>
-
-  <section class="panel" data-panel="payback" hidden>
-   <h2>Окупаемость</h2><div class="sub">Срок возврата вложений</div>
-   <div class="field"><label for="investment">Первоначальные вложения, ₽</label><input id="investment" type="number" inputmode="decimal" value="300000"></div>
-   <div class="field"><label for="monthly">Чистый денежный поток в месяц, ₽</label><input id="monthly" type="number" inputmode="decimal" value="50000"></div>
-   <div class="result"><small>Срок окупаемости</small><div class="value" id="paybackValue">6 мес.</div><div class="hint" id="paybackHint">При сохранении текущего потока</div></div>
-  </section>
-
-  <section class="panel" data-panel="batch" hidden>
-   <h2>Стоимость партии</h2><div class="sub">Закупка, доставка и цена единицы</div>
-   <div class="field"><label for="quantity">Количество единиц</label><input id="quantity" type="number" inputmode="decimal" value="100"></div>
-   <div class="field"><label for="batchCost">Стоимость закупки, ₽</label><input id="batchCost" type="number" inputmode="decimal" value="50000"></div>
-   <div class="field"><label for="delivery">Доставка и дополнительные расходы, ₽</label><input id="delivery" type="number" inputmode="decimal" value="5000"></div>
-   <div class="result"><small>Себестоимость одной единицы</small><div class="value" id="unitValue">550 ₽</div><div class="hint" id="batchHint">Полная стоимость партии: 55 000 ₽</div></div>
-  </section>
-
-  <section class="panel" data-panel="discount" hidden>
-   <h2>Расчёт скидки</h2><div class="sub">Цена после скидки и экономия</div>
-   <div class="field"><label for="discountPrice">Исходная цена, ₽</label><input id="discountPrice" type="number" inputmode="decimal" min="0" value="5000"></div>
-   <div class="field"><label for="discountPercent">Скидка, %</label><input id="discountPercent" type="number" inputmode="decimal" min="0" max="100" value="15"></div>
-   <div class="field"><label for="discountQty">Количество товаров</label><input id="discountQty" type="number" inputmode="decimal" min="1" value="1"></div>
-   <div class="result"><small>Цена после скидки за единицу</small><div class="value" id="discountValue">4 250 ₽</div><div class="hint" id="discountHint">Экономия на всей покупке: 750 ₽</div></div>
-  </section>
-
-  <section class="panel" data-panel="commission" hidden>
-   <h2>Комиссия</h2><div class="sub">Сколько останется после удержания комиссии</div>
-   <div class="field"><label for="commissionRevenue">Сумма продажи, ₽</label><input id="commissionRevenue" type="number" inputmode="decimal" min="0" value="10000"></div>
-   <div class="field"><label for="commissionPercent">Комиссия, %</label><input id="commissionPercent" type="number" inputmode="decimal" min="0" max="100" value="5"></div>
-   <div class="field"><label for="commissionExtra">Дополнительные расходы, ₽</label><input id="commissionExtra" type="number" inputmode="decimal" min="0" value="200"></div>
-   <div class="result"><small>Останется после комиссии и расходов</small><div class="value" id="commissionValue">9 300 ₽</div><div class="hint" id="commissionHint">Комиссия: 500 ₽</div></div>
-  </section>
-
-  <section class="panel" data-panel="vat" hidden>
-   <h2>Калькулятор НДС</h2><div class="sub">Добавить НДС или выделить его из суммы</div>
-   <div class="field"><label for="vatAmount">Сумма, ₽</label><input id="vatAmount" type="number" inputmode="decimal" min="0" value="10000"></div>
-   <div class="field"><label for="vatRate">Ставка НДС, %</label><input id="vatRate" type="number" inputmode="decimal" min="0" value="20"></div>
-   <div class="field"><label for="vatMode">Тип расчёта</label><select id="vatMode"><option value="add">Начислить НДС сверху</option><option value="extract">Выделить НДС из суммы</option></select></div>
-   <div class="result"><small>Сумма НДС</small><div class="value" id="vatValue">2 000 ₽</div><div class="hint" id="vatHint">Итого с НДС: 12 000 ₽</div></div>
-  </section>
-
-  <section class="panel" data-panel="roi" hidden>
-   <h2>Рентабельность затрат</h2><div class="sub">Прибыль относительно понесённых затрат</div>
-   <div class="field"><label for="roiProfit">Прибыль, ₽</label><input id="roiProfit" type="number" inputmode="decimal" value="30000"></div>
-   <div class="field"><label for="roiCosts">Затраты, ₽</label><input id="roiCosts" type="number" inputmode="decimal" min="0" value="100000"></div>
-   <div class="result"><small>Рентабельность затрат</small><div class="value" id="roiValue">30%</div><div class="hint">Прибыль / затраты × 100%</div></div>
-  </section>
-
-  <section class="panel" data-panel="ads" hidden>
-   <h2>Эффективность рекламы</h2><div class="sub">Возврат рекламных расходов и стоимость клиента</div>
-   <div class="field"><label for="adsSpend">Расходы на рекламу, ₽</label><input id="adsSpend" type="number" inputmode="decimal" min="0" value="15000"></div>
-   <div class="field"><label for="adsRevenue">Выручка от рекламы, ₽</label><input id="adsRevenue" type="number" inputmode="decimal" min="0" value="60000"></div>
-   <div class="field"><label for="adsClients">Количество клиентов</label><input id="adsClients" type="number" inputmode="decimal" min="0" value="20"></div>
-   <div class="result"><small>ROAS — возврат рекламных расходов</small><div class="value" id="adsValue">4×</div><div class="hint" id="adsHint">Стоимость привлечения клиента: 750 ₽</div></div>
-  </section>
-
-  <div class="save-row">
-   <input id="calculationLabel" type="text" maxlength="70" placeholder="Название расчёта (необязательно)">
-   <button type="button" id="saveCalculation" class="mode" style="background:#23395a;border-color:#83adff;color:white">Сохранить расчёт</button>
-  </div>
-  <div id="saveStatus" class="hint" aria-live="polite"></div>
- </section>
-
- <section class="panel" id="historyPage" hidden>
-  <h2>История расчётов</h2>
-  <div class="sub">Сохранённые результаты на этом устройстве</div>
-  <div id="historyStatus" class="hint">Пока нет сохранённых расчётов.</div>
-  <input id="historySearch" type="search" placeholder="Поиск по названию, типу, дате и деталям…" aria-label="Поиск по истории" style="margin:9px 0">
-  <div class="extra-actions">
-   <button type="button" id="exportHistory">Экспорт CSV</button>
-   <button type="button" id="clearHistory">Очистить историю</button>
-  </div>
-  <div id="historyList" style="display:grid;gap:9px;margin-top:10px"></div>
- </section>
-
- <section id="comparePage" class="extra-panel" hidden>
-  <h2>Сравнение сценариев</h2>
-  <p class="sub">Выбери два сохранённых расчёта.</p>
-  <div class="compare-controls">
-   <label>Сценарий A<select id="compareA"></select></label>
-   <label>Сценарий B<select id="compareB"></select></label>
-  </div>
-  <div id="compareOutput" class="compare-result" aria-live="polite">Сохрани минимум два расчёта, чтобы сравнить сценарии.</div>
- </section>
-
- <nav class="bottom-nav" aria-label="Основная навигация">
-  <button type="button" data-page="dashboardPage" aria-current="page">Обзор</button>
-  <button type="button" data-page="calculatorPage">Калькуляторы</button>
-  <button type="button" data-page="historyPage">История</button>
- </nav>
-
- <p style="font-size:12px;margin-top:18px">Расчёты справочные. Налоги, комиссии и другие расходы учитывай отдельно.</p>
+<section class="panel history-page" id="historyPage">
+ <h1>История расчётов</h1>
+ <p class="intro">Все сохранённые расчёты и их основные результаты.</p>
+ <input id="historySearch" class="history-search" type="search" placeholder="Поиск по названию, калькулятору или результату">
+ <div class="history-toolbar">
+  <button type="button" class="text-button" id="exportHistory">Экспорт CSV</button>
+  <button type="button" class="text-button" id="clearHistory">Очистить историю</button>
+ </div>
+ <div id="historyStatus" class="hint"></div>
+ <div id="historyList" class="history-list"></div>
+</section>
 </main>
+
+<nav class="bottom-nav">
+ <button type="button" id="navCalculator" class="active">Калькуляторы</button>
+ <button type="button" id="navHistory">История</button>
+</nav>
 
 <script>
 document.addEventListener('DOMContentLoaded',function(){
 'use strict';
 
-var descriptions={
- profit:'Выручка минус себестоимость и прочие расходы.',
- margin:'Узнай, какая часть выручки остаётся в виде прибыли.',
- markup:'Рассчитай цену продажи на основе себестоимости и наценки.',
- break:'Определи минимальную выручку для покрытия постоянных расходов.',
- payback:'Оцени, за сколько месяцев вернутся первоначальные вложения.',
- batch:'Посчитай полную стоимость закупки и себестоимость одной единицы.',
- discount:'Рассчитай цену после скидки и общую экономию.',
- commission:'Узнай, сколько останется после комиссии и дополнительных расходов.',
- vat:'Начисли НДС сверху или выдели налог из суммы.',
- roi:'Сравни прибыль с затратами и рассчитай рентабельность.',
- ads:'Оцени возврат рекламных расходов и стоимость привлечения клиента.'
-};
-
-var modeNames={
+const historyKey='bizcalc_history_v1';
+const names={
  profit:'Прибыль',margin:'Маржа',markup:'Наценка',break:'Безубыточность',
  payback:'Окупаемость',batch:'Стоимость партии',discount:'Скидка',
  commission:'Комиссия',vat:'НДС',roi:'Рентабельность',ads:'Реклама'
 };
-
-var inputIds=[
+const descriptions={
+ profit:'Выручка минус себестоимость и прочие расходы.',
+ margin:'Доля прибыли в выручке.',
+ markup:'Цена продажи на основе себестоимости и наценки.',
+ break:'Минимальная выручка для покрытия постоянных расходов.',
+ payback:'Срок возврата первоначальных вложений.',
+ batch:'Полная стоимость закупки и себестоимость единицы.',
+ discount:'Цена после скидки и общая экономия.',
+ commission:'Сколько останется после комиссии и дополнительных расходов.',
+ vat:'Начисление НДС сверху или выделение его из суммы.',
+ roi:'Прибыль относительно понесённых затрат.',
+ ads:'Возврат рекламных расходов и стоимость привлечения клиента.'
+};
+const inputIds=[
  'revenue','costs','other','mRevenue','mProfit','purchase','markup',
- 'fixed','variable','investment','monthly','quantity','batchCost',
- 'delivery','discountPrice','discountPercent','discountQty',
- 'commissionRevenue','commissionPercent','commissionExtra',
- 'vatAmount','vatRate','vatMode','roiProfit','roiCosts',
- 'adsSpend','adsRevenue','adsClients'
+ 'fixed','variable','investment','monthly','quantity','batchCost','delivery',
+ 'discountPrice','discountPercent','discountQty','commissionRevenue',
+ 'commissionPercent','commissionExtra','vatAmount','vatRate','vatMode',
+ 'roiProfit','roiCosts','adsSpend','adsRevenue','adsClients'
 ];
-
-var historyKey='bizcalc_history_v1';
-
-function el(id){return document.getElementById(id)}
-function n(id){
- var node=el(id);
- if(!node)return 0;
- var x=parseFloat(String(node.value).replace(',','.'));
- return Number.isFinite(x)?x:0;
-}
-function money(x){
- return Number.isFinite(x)?x.toLocaleString('ru-RU',{maximumFractionDigits:2})+' ₽':'—';
-}
-function percent(x){
- return Number.isFinite(x)?x.toLocaleString('ru-RU',{maximumFractionDigits:2})+'%':'—';
-}
-function put(id,value){el(id).textContent=value}
+const $=id=>document.getElementById(id);
+const num=id=>{let x=parseFloat(String($(id)?.value??'').replace(',','.'));return Number.isFinite(x)?x:0};
+const money=x=>Number.isFinite(x)?x.toLocaleString('ru-RU',{maximumFractionDigits:2})+' ₽':'—';
+const pct=x=>Number.isFinite(x)?x.toLocaleString('ru-RU',{maximumFractionDigits:2})+'%':'—';
+const set=(id,value)=>$(id).textContent=value;
 
 function calculate(){
- var rev=n('revenue'),profit=rev-n('costs')-n('other');
- put('profitValue',money(profit));
- put('profitHint','Маржа: '+(rev>0?percent(profit/rev*100):'—'));
+ let rev=num('revenue'),cost=num('costs'),other=num('other'),profit=rev-cost-other;
+ set('profitValue',money(profit));set('profitHint','Маржинальность: '+(rev>0?pct(profit/rev*100):'—'));
 
- var mr=n('mRevenue');
- put('marginValue',mr>0?percent(n('mProfit')/mr*100):'—');
+ set('marginValue',num('mRevenue')>0?pct(num('mProfit')/num('mRevenue')*100):'—');
 
- var price=n('purchase')*(1+n('markup')/100);
- put('salePrice',money(price));
- put('markupHint','Прибыль с единицы: '+money(price-n('purchase')));
+ let sale=num('purchase')*(1+num('markup')/100);
+ set('salePrice',money(sale));set('markupHint','Прибыль с единицы: '+money(sale-num('purchase')));
 
- var contribution=1-n('variable')/100;
- put('breakValue',contribution>0?money(n('fixed')/contribution):'Не рассчитывается');
- put('breakHint',contribution>0?'Маржинальный доход: '+percent(contribution*100):'Переменные расходы должны быть меньше 100%');
+ let contribution=1-num('variable')/100;
+ set('breakValue',contribution>0?money(num('fixed')/contribution):'Не рассчитывается');
+ set('breakHint',contribution>0?'Маржинальный доход: '+pct(contribution*100):'Переменные расходы должны быть меньше 100%');
 
- var monthly=n('monthly');
- put('paybackValue',monthly>0?(n('investment')/monthly).toLocaleString('ru-RU',{maximumFractionDigits:1})+' мес.':'Не рассчитывается');
+ set('paybackValue',num('monthly')>0?(num('investment')/num('monthly')).toLocaleString('ru-RU',{maximumFractionDigits:1})+' мес.':'Не рассчитывается');
 
- var total=n('batchCost')+n('delivery'),qty=n('quantity');
- put('unitValue',qty>0?money(total/qty):'Не рассчитывается');
- put('batchHint','Полная стоимость партии: '+money(total));
+ let total=num('batchCost')+num('delivery');
+ set('unitValue',num('quantity')>0?money(total/num('quantity')):'Не рассчитывается');
+ set('batchHint','Полная стоимость партии: '+money(total));
 
- var dp=n('discountPrice'),dpc=Math.min(100,Math.max(0,n('discountPercent'))),dq=Math.max(0,n('discountQty'));
- put('discountValue',money(dp*(1-dpc/100)));
- put('discountHint','Экономия на всей покупке: '+money(dp*dpc/100*dq));
+ let discount=Math.min(100,Math.max(0,num('discountPercent')));
+ set('discountValue',money(num('discountPrice')*(1-discount/100)));
+ set('discountHint','Экономия на всей покупке: '+money(num('discountPrice')*discount/100*num('discountQty')));
 
- var cr=n('commissionRevenue'),cp=Math.max(0,n('commissionPercent')),fee=cr*cp/100;
- put('commissionValue',money(cr-fee-n('commissionExtra')));
- put('commissionHint','Комиссия: '+money(fee));
+ let fee=num('commissionRevenue')*num('commissionPercent')/100;
+ set('commissionValue',money(num('commissionRevenue')-fee-num('commissionExtra')));
+ set('commissionHint','Комиссия: '+money(fee));
 
- var va=n('vatAmount'),vr=Math.max(0,n('vatRate'));
- if(el('vatMode').value==='extract'){
-  var vat=vr>0?va*vr/(100+vr):0;
-  put('vatValue',money(vat));
-  put('vatHint','Сумма без НДС: '+money(va-vat));
+ let va=num('vatAmount'),rate=Math.max(0,num('vatRate'));
+ if($('vatMode').value==='extract'){
+  let tax=rate>0?va*rate/(100+rate):0;
+  set('vatValue',money(tax));set('vatHint','Сумма без НДС: '+money(va-tax));
  }else{
-  var vatAdd=va*vr/100;
-  put('vatValue',money(vatAdd));
-  put('vatHint','Итого с НДС: '+money(va+vatAdd));
+  let tax=va*rate/100;
+  set('vatValue',money(tax));set('vatHint','Итого с НДС: '+money(va+tax));
  }
 
- var rc=n('roiCosts');
- put('roiValue',rc>0?percent(n('roiProfit')/rc*100):'—');
+ set('roiValue',num('roiCosts')>0?pct(num('roiProfit')/num('roiCosts')*100):'—');
 
- var spend=n('adsSpend'),adRev=n('adsRevenue'),clients=n('adsClients');
- put('adsValue',spend>0?(adRev/spend).toLocaleString('ru-RU',{maximumFractionDigits:2})+'×':'—');
- put('adsHint','Стоимость привлечения клиента: '+(clients>0?money(spend/clients):'—')+' · Рекламный результат: '+money(adRev-spend));
+ let spend=num('adsSpend'),adRev=num('adsRevenue'),clients=num('adsClients');
+ set('adsValue',spend>0?(adRev/spend).toLocaleString('ru-RU',{maximumFractionDigits:2})+'×':'—');
+ set('adsHint','Стоимость клиента: '+(clients>0?money(spend/clients):'—')+' · Рекламный результат: '+money(adRev-spend));
 }
 
-function choose(mode){
- document.querySelectorAll('[data-panel]').forEach(function(panel){
-  panel.hidden=panel.getAttribute('data-panel')!==mode;
- });
- document.querySelectorAll('[data-mode]').forEach(function(button){
-  button.setAttribute('aria-pressed',String(button.getAttribute('data-mode')===mode));
- });
- put('description',descriptions[mode]||'');
+function currentMode(){
+ return document.querySelector('.mode.active')?.dataset.mode||'profit';
 }
-
-document.querySelectorAll('[data-mode]').forEach(function(button){
- button.addEventListener('click',function(){
-  choose(button.getAttribute('data-mode'));
+function currentOutput(mode){
+ const ids={
+  profit:'profitValue',margin:'marginValue',markup:'salePrice',break:'breakValue',
+  payback:'paybackValue',batch:'unitValue',discount:'discountValue',
+  commission:'commissionValue',vat:'vatValue',roi:'roiValue',ads:'adsValue'
+ };
+ return $(ids[mode]).textContent;
+}
+function getInputs(){
+ let v={};
+ inputIds.forEach(id=>v[id]=$(id).value);
+ return v;
+}
+function detailsFor(mode,v){
+ const fields={
+  profit:[['revenue','Выручка'],['costs','Себестоимость и закупки'],['other','Прочие расходы']],
+  margin:[['mRevenue','Выручка'],['mProfit','Прибыль']],
+  markup:[['purchase','Себестоимость единицы'],['markup','Наценка, %']],
+  break:[['fixed','Постоянные расходы'],['variable','Переменные расходы, %']],
+  payback:[['investment','Первоначальные вложения'],['monthly','Денежный поток в месяц']],
+  batch:[['quantity','Количество единиц'],['batchCost','Стоимость закупки'],['delivery','Доставка и доп. расходы']],
+  discount:[['discountPrice','Исходная цена'],['discountPercent','Скидка, %'],['discountQty','Количество товаров']],
+  commission:[['commissionRevenue','Сумма продажи'],['commissionPercent','Процент комиссии'],['commissionExtra','Дополнительные расходы']],
+  vat:[['vatAmount','Сумма'],['vatRate','Ставка НДС, %'],['vatMode','Тип расчёта']],
+  roi:[['roiProfit','Прибыль'],['roiCosts','Затраты']],
+  ads:[['adsSpend','Расходы на рекламу'],['adsRevenue','Выручка от рекламы'],['adsClients','Количество клиентов']]
+ };
+ return (fields[mode]||[]).map(([id,label])=>{
+  let value=v[id];
+  if(id==='vatMode')value=value==='extract'?'Выделение НДС из суммы':'Начисление НДС сверху';
+  else if(id!=='adsClients'&&id!=='quantity'&&id!=='discountQty'&&id!=='markup'&&id!=='variable'&&id!=='discountPercent'&&id!=='commissionPercent'&&id!=='vatRate'){
+   value=money(Number(value)||0);
+  }else if(id==='markup'||id==='variable'||id==='discountPercent'||id==='commissionPercent'||id==='vatRate'){
+   value=(value||0)+'%';
+  }
+  return {label,value:String(value)};
  });
-});
-document.querySelectorAll('input').forEach(function(input){
- input.addEventListener('input',calculate);
-});
-document.querySelectorAll('select').forEach(function(select){
- select.addEventListener('change',calculate);
-});
-
-choose('profit');
-calculate();
-
+}
+function conclusionFor(mode,v){
+ switch(mode){
+  case 'profit':return {label:'Чистая прибыль',value:money(numFrom(v.revenue)-numFrom(v.costs)-numFrom(v.other))};
+  case 'margin':return {label:'Маржинальность',value:$('marginValue').textContent};
+  case 'markup':return {label:'Цена продажи',value:$('salePrice').textContent};
+  case 'break':return {label:'Выручка для выхода в ноль',value:$('breakValue').textContent};
+  case 'payback':return {label:'Срок окупаемости',value:$('paybackValue').textContent};
+  case 'batch':return {label:'Себестоимость одной единицы',value:$('unitValue').textContent,extra:'Полная стоимость партии: '+money(numFrom(v.batchCost)+numFrom(v.delivery))};
+  case 'discount':return {label:'Цена после скидки',value:$('discountValue').textContent,extra:$('discountHint').textContent};
+  case 'commission':return {label:'Останется после удержаний',value:$('commissionValue').textContent,extra:$('commissionHint').textContent};
+  case 'vat':return {label:'Сумма НДС',value:$('vatValue').textContent,extra:$('vatHint').textContent};
+  case 'roi':return {label:'Рентабельность затрат',value:$('roiValue').textContent};
+  case 'ads':return {label:'ROAS — возврат рекламных расходов',value:$('adsValue').textContent,extra:$('adsHint').textContent};
+ }
+}
+function numFrom(v){let x=parseFloat(v);return Number.isFinite(x)?x:0}
 function readHistory(){
- try{
-  var data=JSON.parse(localStorage.getItem(historyKey)||'[]');
-  return Array.isArray(data)?data:[];
- }catch(e){return []}
+ try{let x=JSON.parse(localStorage.getItem(historyKey)||'[]');return Array.isArray(x)?x:[]}
+ catch(e){return []}
 }
 function writeHistory(items){
- try{
-  localStorage.setItem(historyKey,JSON.stringify(items));
-  return true;
- }catch(e){
-  put('historyStatus','Не удалось сохранить историю. Возможно, хранилище браузера недоступно.');
-  return false;
- }
-}
-function activeMode(){
- var mode='profit';
- document.querySelectorAll('[data-mode]').forEach(function(button){
-  if(button.getAttribute('aria-pressed')==='true')mode=button.getAttribute('data-mode');
- });
- return mode;
-}
-function resultFor(mode){
- var ids={
-  profit:'profitValue',margin:'marginValue',markup:'salePrice',
-  break:'breakValue',payback:'paybackValue',batch:'unitValue',
-  discount:'discountValue',commission:'commissionValue',
-  vat:'vatValue',roi:'roiValue',ads:'adsValue'
- };
- return el(ids[mode]).textContent;
-}
-function makeDetails(mode,v){
- var d={};
- function add(key,label,value){d[key]={label:label,value:String(value)}}
-
- if(mode==='profit'){
-  add('revenue','Выручка',money(Number(v.revenue)||0));
-  add('costs','Закупка / себестоимость',money(Number(v.costs)||0));
-  add('other','Прочие расходы',money(Number(v.other)||0));
-  add('profit','Прибыль',money((Number(v.revenue)||0)-(Number(v.costs)||0)-(Number(v.other)||0)));
- }
- else if(mode==='ads'){
-  add('adsRevenue','Выручка от рекламы',money(Number(v.adsRevenue)||0));
-  add('adsSpend','Расходы на рекламу',money(Number(v.adsSpend)||0));
-  add('adsResult','Рекламный результат',money((Number(v.adsRevenue)||0)-(Number(v.adsSpend)||0)));
-  add('adsClients','Количество клиентов',v.adsClients||'0');
- }
- else if(mode==='batch'){
-  var purchase=Number(v.batchCost)||0,delivery=Number(v.delivery)||0;
-  var quantity=Number(v.quantity)||0,total=purchase+delivery;
-  add('batchCost','Закупка',money(purchase));
-  add('delivery','Доставка и доп. расходы',money(delivery));
-  add('total','Полная стоимость партии',money(total));
-  add('unit','Себестоимость единицы',quantity>0?money(total/quantity):'—');
-  add('quantity','Количество единиц',v.quantity||'0');
- }
- else{
-  inputIds.forEach(function(id){
-   if(!Object.prototype.hasOwnProperty.call(v,id))return;
-   var value=v[id];
-   if(value===''||value==null)return;
-   var labels={
-    mRevenue:'Выручка',mProfit:'Прибыль',purchase:'Себестоимость единицы',
-    markup:'Наценка, %',fixed:'Постоянные расходы',
-    variable:'Переменные расходы, %',investment:'Первоначальные вложения',
-    monthly:'Денежный поток в месяц',quantity:'Количество единиц',
-    batchCost:'Закупка партии',delivery:'Доставка',
-    discountPrice:'Исходная цена',discountPercent:'Скидка, %',
-    discountQty:'Количество товаров',commissionRevenue:'Сумма продажи',
-    commissionPercent:'Комиссия, %',commissionExtra:'Доп. расходы',
-    vatAmount:'Сумма',vatRate:'Ставка НДС, %',vatMode:'Тип расчёта',
-    roiProfit:'Прибыль',roiCosts:'Затраты'
-   };
-   if(labels[id]){
-    var shown=value;
-    if(id!=='vatMode')shown=String(value).replace('.',',')+(id.indexOf('Percent')!==-1||id==='markup'||id==='variable'||id==='vatRate'?'%':'');
-    if(id==='vatMode')shown=value==='extract'?'Выделить НДС':'Начислить НДС';
-    add(id,labels[id],shown);
-   }
-  });
- }
- return d;
-}
-function currentResult(mode,label){
- var values={};
- inputIds.forEach(function(id){
-  var node=el(id);
-  if(node)values[id]=node.value;
- });
- var date=new Date().toISOString();
- var cleanLabel=(label||'').trim();
- if(!cleanLabel)cleanLabel=(modeNames[mode]||'Расчёт')+' — '+new Date(date).toLocaleDateString('ru-RU');
-
- return{
-  id:String(Date.now())+'_'+Math.random().toString(36).slice(2,8),
-  mode:mode,
-  label:cleanLabel,
-  values:values,
-  details:makeDetails(mode,values),
-  result:resultFor(mode),
-  date:date
- };
-}
-function dateText(date){
- var d=new Date(date);
- return Number.isNaN(d.getTime())?'Дата неизвестна':d.toLocaleString('ru-RU');
+ try{localStorage.setItem(historyKey,JSON.stringify(items));return true}
+ catch(e){set('saveStatus','Не удалось сохранить расчёт в браузере.');return false}
 }
 function fallbackLabel(item){
- return item.label||((modeNames[item.mode]||'Расчёт')+' — '+(item.date?new Date(item.date).toLocaleDateString('ru-RU'):'без даты'));
+ return item.label||((names[item.mode]||'Расчёт')+' — '+(item.date?new Date(item.date).toLocaleDateString('ru-RU'):''));
 }
-function detailEntries(item){
- if(item.details&&typeof item.details==='object'){
-  return Object.keys(item.details).map(function(key){
-   var x=item.details[key];
-   return x&&typeof x==='object'?{label:x.label||key,value:x.value||'—'}:{label:key,value:String(x)};
-  });
- }
- // Старые записи версии 1.3: показываем доступные параметры без потери совместимости.
- var values=item.values||{},entries=[];
- var labels={
-  revenue:'Выручка',costs:'Закупка / себестоимость',other:'Прочие расходы',
-  adsRevenue:'Выручка от рекламы',adsSpend:'Расходы на рекламу',
-  batchCost:'Закупка партии',delivery:'Доставка',quantity:'Количество единиц'
+function dateText(date){
+ let d=new Date(date);
+ return Number.isNaN(d.getTime())?'Дата неизвестна':d.toLocaleString('ru-RU');
+}
+function getConclusion(item){
+ if(item.conclusion)return item.conclusion;
+ // Поддержка сохранений старой версии.
+ let v=item.values||{};
+ if(item.mode==='profit')return {label:'Чистая прибыль',value:money(numFrom(v.revenue)-numFrom(v.costs)-numFrom(v.other))};
+ if(item.mode==='commission')return {label:'Останется после удержаний',value:item.result||'—'};
+ if(item.mode==='batch')return {label:'Себестоимость одной единицы',value:item.result||'—'};
+ if(item.mode==='ads')return {label:'ROAS — возврат рекламных расходов',value:item.result||'—'};
+ return {label:'Результат расчёта',value:item.result||'—'};
+}
+function getDetails(item){
+ if(Array.isArray(item.details))return item.details;
+ // Для старых записей версии 1.3 восстанавливаем только использованные параметры.
+ return detailsFor(item.mode||'profit',item.values||{});
+}
+function save(){
+ let mode=currentMode(),values=getInputs(),label=$('calculationLabel').value.trim();
+ if(!label)label=(names[mode]||'Расчёт')+' — '+new Date().toLocaleDateString('ru-RU');
+ let item={
+  id:String(Date.now())+'_'+Math.random().toString(36).slice(2,7),
+  mode,label,values,
+  details:detailsFor(mode,values),
+  conclusion:conclusionFor(mode,values),
+  result:currentOutput(mode),
+  date:new Date().toISOString()
  };
- Object.keys(labels).forEach(function(key){
-  if(values[key]!==undefined&&values[key]!==''){
-   entries.push({label:labels[key],value:values[key]});
-  }
- });
- if(item.mode==='profit'&&values.revenue!==undefined){
-  entries.push({label:'Прибыль',value:money((Number(values.revenue)||0)-(Number(values.costs)||0)-(Number(values.other)||0))});
+ let items=readHistory();items.push(item);
+ if(writeHistory(items)){
+  $('calculationLabel').value='';
+  set('saveStatus','Расчёт сохранён.');
+  refresh();
  }
- if(item.mode==='ads'&&values.adsRevenue!==undefined){
-  entries.push({label:'Рекламный результат',value:money((Number(values.adsRevenue)||0)-(Number(values.adsSpend)||0))});
- }
- if(item.mode==='batch'&&values.batchCost!==undefined){
-  var total=(Number(values.batchCost)||0)+(Number(values.delivery)||0);
-  entries.push({label:'Полная стоимость партии',value:money(total)});
-  entries.push({label:'Себестоимость единицы',value:Number(values.quantity)>0?money(total/Number(values.quantity)):'—'});
- }
- return entries;
-}
-function makeDetailGrid(item){
- var grid=document.createElement('div');
- grid.className='history-details';
- detailEntries(item).forEach(function(entry){
-  var box=document.createElement('div');box.className='detail';
-  var label=document.createElement('small');label.textContent=entry.label;
-  var value=document.createElement('span');value.textContent=entry.value;
-  box.appendChild(label);box.appendChild(value);grid.appendChild(box);
- });
- return grid;
 }
 
+function element(tag,cls,text){
+ let e=document.createElement(tag);
+ if(cls)e.className=cls;
+ if(text!==undefined)e.textContent=text;
+ return e;
+}
 function renderHistory(){
- var items=readHistory(),list=el('historyList');
+ let items=readHistory(),list=$('historyList');
  list.textContent='';
- el('historyStatus').textContent=items.length?'Сохранено расчётов: '+items.length:'Пока нет сохранённых расчётов.';
- var query=(el('historySearch').value||'').toLocaleLowerCase('ru-RU');
-
- items.slice().reverse().filter(function(item){
-  var details=detailEntries(item).map(function(x){return x.label+' '+x.value}).join(' ');
-  var hay=[fallbackLabel(item),modeNames[item.mode]||'Расчёт',item.result||'',item.date||'',details,JSON.stringify(item.values||{})].join(' ').toLocaleLowerCase('ru-RU');
-  return hay.indexOf(query)!==-1;
- }).forEach(function(item){
-  var card=document.createElement('div');card.className='history-item';
-  var top=document.createElement('div');top.className='history-item-top';
-  var info=document.createElement('div');
-
-  var title=document.createElement('strong');title.textContent=fallbackLabel(item);
-  var type=document.createElement('div');type.className='hint';type.textContent=modeNames[item.mode]||'Расчёт';
-  var value=document.createElement('div');value.className='value';value.style.fontSize='20px';value.textContent=item.result||'—';
-  var date=document.createElement('div');date.className='hint';date.textContent=dateText(item.date);
-
-  info.appendChild(title);info.appendChild(type);info.appendChild(value);info.appendChild(date);
-  top.appendChild(info);card.appendChild(top);
-  card.appendChild(makeDetailGrid(item));
-
-  var actions=document.createElement('div');actions.className='history-actions';
-  var restore=document.createElement('button');restore.type='button';restore.textContent='Открыть расчёт';
-  restore.addEventListener('click',function(){
-   inputIds.forEach(function(id){
-    var node=el(id);
-    if(node&&Object.prototype.hasOwnProperty.call(item.values||{},id))node.value=item.values[id];
-   });
-   el('calculationLabel').value=item.label||'';
-   choose(item.mode||'profit');calculate();showPage('calculatorPage');
-   window.scrollTo({top:0,behavior:'smooth'});
-  });
-  var remove=document.createElement('button');remove.type='button';remove.textContent='Удалить';
-  remove.addEventListener('click',function(){
-   writeHistory(readHistory().filter(function(x){return x.id!==item.id}));
-   refreshAll();
-  });
-  actions.appendChild(restore);actions.appendChild(remove);
-  card.appendChild(actions);list.appendChild(card);
+ let query=($('historySearch').value||'').toLocaleLowerCase('ru-RU');
+ let filtered=items.slice().reverse().filter(item=>{
+  let conclusion=getConclusion(item);
+  let hay=[fallbackLabel(item),names[item.mode]||'',conclusion.label,conclusion.value,item.date].join(' ').toLocaleLowerCase('ru-RU');
+  return hay.includes(query);
  });
-}
-
-function renderDashboard(){
- var items=readHistory(),week=Date.now()-7*24*60*60*1000;
- el('statTotal').textContent=items.length;
- el('statWeek').textContent=items.filter(function(x){
-  return new Date(x.date).getTime()>=week;
- }).length;
-
- var recent=el('recentCalculations');recent.textContent='';
- if(!items.length){
-  recent.textContent='Пока нет сохранённых расчётов.';
+ set('historyStatus',items.length?'Всего сохранено: '+items.length:'История пока пуста.');
+ if(!filtered.length){
+  list.appendChild(element('div','empty',items.length?'Ничего не найдено.':'Сохрани первый расчёт — он появится здесь.'));
   return;
  }
- items.slice(-3).reverse().forEach(function(item){
-  var node=document.createElement('div');node.className='mini-item';
-  var title=document.createElement('strong');title.textContent=fallbackLabel(item);
-  var result=document.createElement('div');result.className='value';result.style.fontSize='18px';result.textContent=item.result||'—';
-  var type=document.createElement('div');type.className='hint';type.textContent=(modeNames[item.mode]||'Расчёт')+' · '+dateText(item.date);
-  node.appendChild(title);node.appendChild(result);node.appendChild(type);
-  recent.appendChild(node);
- });
-}
+ filtered.forEach(item=>{
+  let card=element('article','history-item');
+  let top=element('div','history-top');
+  let info=element('div');
+  info.appendChild(element('div','history-title',fallbackLabel(item)));
+  info.appendChild(element('div','history-type',names[item.mode]||'Калькулятор'));
+  info.appendChild(element('div','history-date',dateText(item.date)));
+  top.appendChild(info);card.appendChild(top);
 
-function renderCompare(){
- var items=readHistory(),a=el('compareA'),b=el('compareB'),oldA=a.value,oldB=b.value;
- [a,b].forEach(function(sel){
-  sel.textContent='';
-  items.forEach(function(item){
-   var opt=document.createElement('option');opt.value=item.id;
-   opt.textContent=fallbackLabel(item)+' · '+(modeNames[item.mode]||'Расчёт')+' · '+(item.result||'—');
-   sel.appendChild(opt);
-  });
- });
- if(items.some(function(x){return x.id===oldA}))a.value=oldA;
- if(items.some(function(x){return x.id===oldB}))b.value=oldB;
- updateCompare();
-}
-function updateCompare(){
- var items=readHistory();
- var a=items.find(function(x){return x.id===el('compareA').value});
- var b=items.find(function(x){return x.id===el('compareB').value});
- var out=el('compareOutput');out.textContent='';
- if(!a||!b){out.textContent='Сохрани минимум два расчёта, чтобы сравнить сценарии.';return}
- function add(label,item){
-  var p=document.createElement('p');
-  var strong=document.createElement('strong');
-  strong.textContent=label+' · '+fallbackLabel(item);
-  p.appendChild(strong);
-  p.appendChild(document.createTextNode(' — '+(item.result||'—')));
-  out.appendChild(p);
- }
- add('Сценарий A',a);add('Сценарий B',b);
- var note=document.createElement('div');note.className='hint';
- note.textContent=a.mode===b.mode?
-  'Оба сценария используют один калькулятор. Сравни результаты и исходные параметры в истории.':
-  'Это разные типы расчётов, поэтому числовая разница между результатами не рассчитывается.';
- out.appendChild(note);
-}
+  let conclusion=getConclusion(item);
+  let result=element('div','history-result');
+  result.appendChild(element('small',null,conclusion.label));
+  result.appendChild(element('strong',null,conclusion.value));
+  if(conclusion.extra)result.appendChild(element('div','hint',conclusion.extra));
+  card.appendChild(result);
 
-function refreshAll(){
- renderHistory();
- renderDashboard();
- renderCompare();
-}
-
-function showPage(id){
- el('dashboardPage').hidden=id!=='dashboardPage';
- el('calculatorPage').hidden=id!=='calculatorPage';
- el('historyPage').hidden=id!=='historyPage';
- el('comparePage').hidden=id!=='comparePage';
- document.querySelectorAll('.bottom-nav button').forEach(function(btn){
-  if(btn.getAttribute('data-page')===id)btn.setAttribute('aria-current','page');
-  else btn.removeAttribute('aria-current');
- });
- if(id==='dashboardPage')renderDashboard();
- if(id==='historyPage')renderHistory();
-}
-
-el('saveCalculation').addEventListener('click',function(){
- var mode=activeMode();
- var label=el('calculationLabel').value;
- var items=readHistory();
- items.push(currentResult(mode,label));
- if(writeHistory(items)){
-  put('saveStatus','Расчёт сохранён в истории.');
-  el('calculationLabel').value='';
-  refreshAll();
- }
-});
-
-el('clearHistory').addEventListener('click',function(){
- if(window.confirm('Удалить всю историю расчётов?')){
-  writeHistory([]);
-  refreshAll();
- }
-});
-el('historySearch').addEventListener('input',renderHistory);
-el('exportHistory').addEventListener('click',function(){
- var rows=[[
-  'Дата','Название','Калькулятор','Доходы / выручка',
-  'Закупка / себестоимость','Прочие расходы',
-  'Прибыль / рекламный результат','Результат','Параметры'
- ]];
-
- readHistory().forEach(function(item){
-  var v=item.values||{},income='',purchase='',other='',profit='';
-  if(item.mode==='profit'){
-   income=v.revenue||'';
-   purchase=v.costs||'';
-   other=v.other||'';
-   profit=(Number(v.revenue)||0)-(Number(v.costs)||0)-(Number(v.other)||0);
-  }else if(item.mode==='ads'){
-   income=v.adsRevenue||'';
-   other=v.adsSpend||'';
-   profit=(Number(v.adsRevenue)||0)-(Number(v.adsSpend)||0);
-  }else if(item.mode==='batch'){
-   purchase=v.batchCost||'';
-   other=v.delivery||'';
+  let details=getDetails(item);
+  if(details.length){
+   let grid=element('div','history-details');
+   details.forEach(d=>{
+    let box=element('div','detail');
+    box.appendChild(element('small',null,d.label));
+    box.appendChild(element('span',null,d.value));
+    grid.appendChild(box);
+   });
+   card.appendChild(grid);
   }
 
-  rows.push([
-   dateText(item.date),
-   fallbackLabel(item),
-   modeNames[item.mode]||item.mode,
-   income,
-   purchase,
-   other,
-   profit===''?'':profit,
-   item.result||'',
-   JSON.stringify(v)
-  ]);
+  let actions=element('div','history-actions');
+  let open=element('button',null,'Открыть расчёт');
+  open.type='button';
+  open.addEventListener('click',()=>{
+   let values=item.values||{};
+   inputIds.forEach(id=>{if(values[id]!==undefined)$(id).value=values[id]});
+   $('calculationLabel').value=item.label||'';
+   selectMode(item.mode||'profit');
+   calculate();showPage('calculator');
+   window.scrollTo({top:0,behavior:'smooth'});
+  });
+  let del=element('button',null,'Удалить');
+  del.type='button';
+  del.addEventListener('click',()=>{
+   writeHistory(readHistory().filter(x=>x.id!==item.id));refresh();
+  });
+  actions.appendChild(open);actions.appendChild(del);card.appendChild(actions);
+  list.appendChild(card);
  });
-
- function csvCell(value){
-  return '"'+String(value==null?'':value).replace(/"/g,'""')+'"';
+}
+function miniCard(item){
+ let node=element('div','mini-item');
+ node.appendChild(element('strong',null,fallbackLabel(item)));
+ let c=getConclusion(item);
+ node.appendChild(element('div','value',c.value));
+ node.appendChild(element('div','hint',names[item.mode]+' · '+dateText(item.date)));
+ return node;
+}
+function renderDashboard(){
+ let items=readHistory(),week=Date.now()-7*86400000;
+ let count=items.length;
+ let recent=items.slice(-3).reverse();
+ let weekCount=items.filter(x=>new Date(x.date).getTime()>=week).length;
+ ['statTotal','mobileStatTotal'].forEach(id=>set(id,count));
+ ['statWeek','mobileStatWeek'].forEach(id=>set(id,weekCount));
+ ['recentCalculations','desktopRecent','mobileRecent'].forEach(id=>{
+  let box=$(id);box.textContent='';
+  if(!recent.length){box.appendChild(element('div','empty','Пока нет сохранённых расчётов.'));return}
+  recent.forEach(item=>box.appendChild(miniCard(item)));
+ });
+}
+function refresh(){renderHistory();renderDashboard()}
+function selectMode(mode){
+ document.querySelectorAll('.mode').forEach(btn=>btn.classList.toggle('active',btn.dataset.mode===mode));
+ document.querySelectorAll('[data-panel]').forEach(panel=>panel.hidden=panel.dataset.panel!==mode);
+ $('modeSummary').textContent=names[mode]||'Выбрать калькулятор';
+ $('description').textContent=descriptions[mode]||'';
+ $('modePicker').open=false;
+ calculate();
+}
+document.querySelectorAll('.mode').forEach(btn=>btn.addEventListener('click',()=>selectMode(btn.dataset.mode)));
+inputIds.forEach(id=>$(id).addEventListener('input',calculate));
+$('vatMode').addEventListener('change',calculate);
+$('saveCalculation').addEventListener('click',save);
+$('historySearch').addEventListener('input',renderHistory);
+$('clearHistory').addEventListener('click',()=>{
+ if(confirm('Удалить всю историю расчётов?')){
+  localStorage.removeItem(historyKey);refresh();
  }
- var csv='\uFEFF'+rows.map(function(row){
-  return row.map(csvCell).join(';');
- }).join('\r\n');
- var blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
- var url=URL.createObjectURL(blob);
- var a=document.createElement('a');
- a.href=url;a.download='bizcalc-history.csv';
- document.body.appendChild(a);a.click();a.remove();
+});
+$('exportHistory').addEventListener('click',()=>{
+ let rows=[['Дата','Название','Калькулятор','Основной результат','Показатель','Значение']];
+ readHistory().forEach(item=>{
+  let c=getConclusion(item);
+  rows.push([dateText(item.date),fallbackLabel(item),names[item.mode]||item.mode,c.label,c.value,'']);
+  getDetails(item).forEach(d=>rows.push(['','','','',d.label,d.value]));
+ });
+ let csv='\uFEFF'+rows.map(row=>row.map(x=>'"'+String(x??'').replace(/"/g,'""')+'"').join(';')).join('\r\n');
+ let blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
+ let url=URL.createObjectURL(blob),a=document.createElement('a');
+ a.href=url;a.download='bizcalc-history.csv';a.click();
  URL.revokeObjectURL(url);
 });
+function showPage(page){
+ $('calculatorPage').style.display=page==='calculator'?'block':'none';
+ $('historyPage').classList.toggle('active',page==='history');
+ $('navCalculator').classList.toggle('active',page==='calculator');
+ $('navHistory').classList.toggle('active',page==='history');
+ if(page==='history')renderHistory();
+}
+$('navCalculator').addEventListener('click',()=>showPage('calculator'));
+$('navHistory').addEventListener('click',()=>showPage('history'));
+$('desktopOpenHistory').addEventListener('click',()=>showPage('history'));
 
-document.querySelectorAll('.bottom-nav button').forEach(function(btn){
- btn.addEventListener('click',function(){showPage(btn.getAttribute('data-page'))});
-});
-el('openCompare').addEventListener('click',function(){
- renderCompare();showPage('comparePage');
-});
-el('openHistory').addEventListener('click',function(){showPage('historyPage')});
-el('compareA').addEventListener('change',updateCompare);
-el('compareB').addEventListener('change',updateCompare);
-
-refreshAll();
-showPage('dashboardPage');
-
+selectMode('profit');
+calculate();
+refresh();
+showPage('calculator');
 });
 </script>
 </body>
