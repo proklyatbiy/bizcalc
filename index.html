@@ -5,26 +5,107 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#0b1220">
+<meta name="description" content="BizCalc — бесплатные бизнес-калькуляторы для расчёта прибыли, маржи, наценки, окупаемости и других показателей.">
 <title>BizCalc — бизнес-калькуляторы</title>
 <style>
 :root{
  --bg:#0b1220;--panel:#142238;--line:#293b55;
  --txt:#edf4ff;--muted:#9eafc7;--blue:#83adff;--green:#62dfaa;
+ --surface:#101c2d;--radius:16px;
 }
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--txt);font:15px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+html{scroll-behavior:smooth;scroll-padding-top:85px}
+body{margin:0;background:var(--bg);color:var(--txt);font:15px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;overflow-x:hidden}
 button,input,select{font:inherit}
 button{cursor:pointer}
-header{max-width:1440px;margin:auto;padding:20px 24px 12px}
-.brand{font-size:23px;font-weight:800;letter-spacing:-.5px}
-.brand b{display:inline-grid;place-items:center;width:35px;height:35px;margin-right:8px;border-radius:11px;background:linear-gradient(135deg,#83bdff,#9a85ff);color:#101a2a}
-main{max-width:1440px;margin:auto;padding:10px 24px 35px}
+a{color:inherit;text-decoration:none}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--blue);outline-offset:3px}
+header{position:sticky;top:0;z-index:30;background:rgba(11,18,32,.88);backdrop-filter:blur(18px);border-bottom:1px solid rgba(41,59,85,.65)}
+.header-inner{max-width:1320px;margin:auto;padding:13px 24px;display:flex;align-items:center;justify-content:space-between;gap:18px}
+.brand{font-size:22px;font-weight:850;letter-spacing:-.6px;display:flex;align-items:center;cursor:pointer}
+.brand b{display:inline-grid;place-items:center;width:35px;height:35px;margin-right:9px;border-radius:11px;background:linear-gradient(135deg,#83bdff,#9a85ff);color:#101a2a}
+.header-links{display:flex;align-items:center;gap:24px;color:var(--muted);font-size:13px}
+.header-links a:hover{color:var(--txt)}
+.header-actions{display:flex;gap:8px;align-items:center}
+.header-button{border:1px solid var(--line);background:#17263b;color:var(--txt);padding:9px 14px;border-radius:10px;font-weight:650;font-size:13px}
+.header-button.primary{background:#23395a;border-color:#557db8}
+main{max-width:1320px;margin:auto;padding:0 24px 60px}
+.landing{display:block}
+.hero{position:relative;min-height:510px;padding:85px 0 75px;display:grid;grid-template-columns:1.05fr .95fr;align-items:center;gap:45px;overflow:hidden}
+.hero:before{content:"";position:absolute;width:540px;height:540px;right:4%;top:-130px;background:radial-gradient(circle,rgba(93,139,220,.19),transparent 68%);pointer-events:none;animation:glow 8s ease-in-out infinite alternate}
+.hero-copy,.hero-demo{position:relative;z-index:1;animation:fadeUp .8s both}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;color:#a9c7ff;background:rgba(131,173,255,.09);border:1px solid rgba(131,173,255,.2);padding:7px 11px;border-radius:30px;font-size:12px;font-weight:700;margin-bottom:21px}
+.eyebrow:before{content:"";width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 12px var(--green)}
+.hero h1{font-size:clamp(39px,5vw,65px);line-height:1.04;letter-spacing:-2.8px;margin:0 0 20px;max-width:680px}
+.gradient-text{background:linear-gradient(100deg,#83adff,#b8a4ff 60%,#62dfaa);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero-description{max-width:540px;color:var(--muted);font-size:16px;line-height:1.7;margin:0 0 28px}
+.hero-actions{display:flex;gap:11px;flex-wrap:wrap}
+.big-button{border:1px solid #628bca;background:linear-gradient(135deg,#315482,#263d62);color:white;border-radius:11px;padding:14px 19px;font-weight:750;font-size:14px;transition:.2s}
+.big-button:hover{transform:translateY(-2px);filter:brightness(1.15)}
+.secondary-button{border:1px solid var(--line);background:#142238;color:var(--txt);border-radius:11px;padding:14px 18px;font-weight:650;font-size:14px;transition:.2s}
+.secondary-button:hover{border-color:var(--blue);transform:translateY(-2px)}
+.hero-note{font-size:12px;color:var(--muted);margin-top:17px}
+.hero-demo{background:linear-gradient(145deg,rgba(25,43,67,.97),rgba(16,28,45,.98));border:1px solid #344c6b;border-radius:20px;padding:23px;box-shadow:0 25px 80px rgba(0,0,0,.25);transform:rotate(1deg);animation:fadeUp .9s .15s both}
+.demo-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}
+.demo-title{font-size:14px;font-weight:750}
+.demo-tag{font-size:11px;color:var(--green);background:rgba(98,223,170,.09);padding:6px 9px;border-radius:20px}
+.demo-label{font-size:12px;color:var(--muted);margin-bottom:6px}
+.demo-inputs{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.demo-input{background:#0c1728;border:1px solid #2d405b;border-radius:10px;padding:12px}
+.demo-input strong{font-size:16px}
+.demo-result{margin-top:14px;padding:17px;border-radius:13px;background:rgba(16,57,49,.65);border:1px solid #28614f}
+.demo-result small{font-size:12px;color:#a8c9bc}
+.demo-number{font-size:31px;color:var(--green);font-weight:850;letter-spacing:-1px;margin-top:5px}
+.demo-foot{display:flex;justify-content:space-between;gap:12px;margin-top:12px;color:var(--muted);font-size:11px}
+.section{padding:65px 0}
+.section-heading{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;margin-bottom:26px}
+.section-heading h2{font-size:clamp(25px,3vw,34px);letter-spacing:-1px;margin:0 0 8px}
+.section-heading p{color:var(--muted);font-size:14px;margin:0;line-height:1.5}
+.section-kicker{font-size:11px;letter-spacing:1.2px;text-transform:uppercase;color:var(--blue);font-weight:750;margin-bottom:10px}
+.catalog-filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.filter-button{padding:9px 13px;border:1px solid var(--line);background:#142238;color:var(--muted);border-radius:9px;font-size:12px;font-weight:650}
+.filter-button.active{background:#23395a;border-color:var(--blue);color:white}
+.catalog-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.tool-card{position:relative;min-width:0;text-align:left;padding:18px;background:linear-gradient(145deg,#172940,#121f32);border:1px solid var(--line);border-radius:14px;color:var(--txt);transition:transform .2s,border-color .2s,background .2s;animation:fadeUp .5s both}
+.tool-card:hover{transform:translateY(-4px);border-color:#6489c0;background:#1a2e49}
+.tool-icon{width:35px;height:35px;display:grid;place-items:center;border-radius:10px;background:#263d5d;color:#a9c7ff;font-weight:850;font-size:15px;margin-bottom:14px}
+.tool-card h3{font-size:15px;margin:0 0 6px}
+.tool-card p{font-size:12px;color:var(--muted);line-height:1.5;margin:0;min-height:36px}
+.tool-arrow{position:absolute;right:17px;top:19px;color:#7899c6;font-size:18px}
+.features-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.feature-card{padding:19px;background:var(--panel);border:1px solid var(--line);border-radius:14px;min-height:165px;transition:.2s}
+.feature-card:hover{transform:translateY(-3px);border-color:#526f98}
+.feature-icon{width:36px;height:36px;border-radius:10px;background:#263d5d;display:grid;place-items:center;color:#a9c7ff;font-weight:800;margin-bottom:15px}
+.feature-card h3{font-size:14px;margin:0 0 7px}
+.feature-card p{font-size:12px;color:var(--muted);line-height:1.55;margin:0}
+.knowledge-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.knowledge-card{background:#142238;border:1px solid var(--line);border-radius:14px;padding:19px}
+.knowledge-card h3{font-size:15px;margin:0 0 8px}
+.knowledge-card p{font-size:13px;color:var(--muted);line-height:1.6;margin:0}
+.formula{margin-top:12px;padding:10px 12px;background:#0d192a;border:1px solid #293d58;border-radius:9px;color:#b7d0ff;font-size:12px;font-weight:650}
+.faq-list{display:grid;gap:9px;max-width:900px}
+.faq-item{border:1px solid var(--line);border-radius:12px;background:var(--panel);overflow:hidden}
+.faq-item summary{padding:16px 18px;cursor:pointer;font-size:14px;font-weight:700;list-style:none;display:flex;justify-content:space-between;gap:15px}
+.faq-item summary::-webkit-details-marker{display:none}
+.faq-item summary:after{content:"+";color:var(--blue);font-size:19px}
+.faq-item[open] summary:after{content:"−"}
+.faq-answer{padding:0 18px 17px;color:var(--muted);font-size:13px;line-height:1.65}
+.cta-strip{margin:35px 0 15px;padding:27px 30px;border:1px solid #344e70;border-radius:17px;background:linear-gradient(110deg,#172d49,#142238 70%);display:flex;justify-content:space-between;align-items:center;gap:20px}
+.cta-strip h2{font-size:21px;margin:0 0 7px}
+.cta-strip p{font-size:13px;color:var(--muted);margin:0}
+footer{border-top:1px solid var(--line);margin-top:55px;padding:24px 0;color:var(--muted);font-size:12px;display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap}
+.reveal{opacity:0;transform:translateY(22px);transition:opacity .65s ease,transform .65s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+/* Приложение */
+#calculatorPage{display:none;padding-top:25px}
+#historyPage{display:none;padding-top:25px}
+#historyPage.active{display:block}
 .layout{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(350px,.85fr);gap:18px;align-items:start}
 .left-column,.right-column{min-width:0}
 .panel{background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:17px}
 .panel h2{font-size:18px;margin:0 0 5px}
 .sub{font-size:13px;color:var(--muted);margin-bottom:13px;line-height:1.4}
-h1{font-size:27px;letter-spacing:-.7px;margin:0 0 7px}
+#calculatorPage h1,#historyPage h1{font-size:27px;letter-spacing:-.7px;margin:0 0 7px}
 .intro{color:var(--muted);font-size:13px;margin:0 0 15px}
 .mode-picker{position:relative;margin-bottom:12px}
 .mode-picker summary{list-style:none;cursor:pointer;padding:13px 15px;border:1px solid var(--line);background:#17263b;border-radius:11px;font-weight:650;display:flex;justify-content:space-between;align-items:center}
@@ -57,8 +138,6 @@ input:focus,select:focus{border-color:var(--blue)}
 .mini-item .value{font-size:18px;margin-top:4px}
 .mini-item .hint{margin-top:4px}
 .text-button{border:1px solid var(--line);background:#17263b;color:var(--txt);border-radius:9px;padding:9px 12px;font-size:12px}
-.history-page{display:none}
-.history-page.active{display:block}
 .history-search{margin:12px 0}
 .history-list{display:grid;gap:10px;margin-top:12px}
 .history-item{background:#101c2d;border:1px solid var(--line);border-radius:12px;padding:13px}
@@ -81,12 +160,45 @@ input:focus,select:focus{border-color:var(--blue)}
 .mobile-overview{display:none}
 .bottom-nav{display:none}
 .empty{color:var(--muted);font-size:13px;padding:12px 0}
+.back-home{margin-bottom:17px;border:0;background:transparent;color:var(--blue);padding:5px 0;font-size:13px;font-weight:650}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes glow{from{transform:translate(0,0) scale(1)}to{transform:translate(-35px,25px) scale(1.12)}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}}
+@media(max-width:900px){
+ .hero{grid-template-columns:1fr;gap:30px;padding:65px 0}
+ .hero-copy{max-width:700px}
+ .hero-demo{max-width:570px;width:100%;transform:none}
+ .features-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
 @media(max-width:760px){
- header{padding:15px 13px 8px}
- main{padding:8px 12px 90px}
+ .header-inner{padding:11px 13px}
+ .header-links{display:none}
+ .brand{font-size:20px}
+ .header-button{padding:8px 10px;font-size:12px}
+ main{padding:0 13px 90px}
+ .hero{padding:54px 0 45px;min-height:0;gap:28px}
+ .hero h1{font-size:42px;letter-spacing:-1.8px}
+ .hero-description{font-size:14px}
+ .hero-demo{padding:17px}
+ .demo-number{font-size:27px}
+ .section{padding:43px 0}
+ .section-heading{display:block}
+ .section-heading .text-button{margin-top:12px}
+ .catalog-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+ .tool-card{padding:13px}
+ .tool-card p{font-size:11px}
+ .tool-card h3{font-size:13px}
+ .tool-icon{margin-bottom:10px}
+ .features-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+ .feature-card{padding:14px;min-height:0}
+ .knowledge-grid{grid-template-columns:1fr}
+ .cta-strip{padding:20px;display:block}
+ .cta-strip .big-button{margin-top:15px;width:100%}
+ footer{margin-top:35px}
+ #calculatorPage{padding-top:17px}
+ #historyPage{padding-top:17px}
  .layout{display:block}
  .right-column{display:none}
- .right-column .panel{margin-bottom:12px}
  .desktop-history{display:none}
  .mobile-overview{display:block}
  .mode-options{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -98,21 +210,136 @@ input:focus,select:focus{border-color:var(--blue)}
  .bottom-nav button.active{border-color:var(--blue);background:#23395a;color:white}
  .history-page{padding-bottom:20px}
 }
-@media(min-width:761px){
- .mobile-overview{display:none}
+@media(max-width:390px){
+ .hero h1{font-size:36px}
+ .catalog-grid{grid-template-columns:1fr 1fr}
+ .stats{gap:5px}
+ .stat{padding:8px}
+ .stat strong{font-size:19px}
 }
 </style>
 </head>
 <body>
-<header><div class="brand"><b>B</b>BizCalc</div></header>
+<header>
+ <div class="header-inner">
+  <div class="brand" id="brandHome"><b>B</b>BizCalc</div>
+  <nav class="header-links">
+   <a href="#catalog">Инструменты</a>
+   <a href="#features">Возможности</a>
+   <a href="#knowledge">База знаний</a>
+   <a href="#faq">FAQ</a>
+  </nav>
+  <div class="header-actions">
+   <button class="header-button" id="headerHistory">История</button>
+   <button class="header-button primary" id="headerStart">Открыть калькулятор</button>
+  </div>
+ </div>
+</header>
 
 <main>
+<!-- ГЛАВНАЯ -->
+<div class="landing" id="landingPage">
+ <section class="hero">
+  <div class="hero-copy">
+   <div class="eyebrow">Бесплатные инструменты для бизнеса</div>
+   <h1>Считай точнее.<br><span class="gradient-text">Решай увереннее.</span></h1>
+   <p class="hero-description">BizCalc помогает быстро рассчитывать прибыль, расходы, маржу, окупаемость и другие важные показатели. Без сложных таблиц и лишних действий.</p>
+   <div class="hero-actions">
+    <button class="big-button" id="heroStart">Начать расчёт →</button>
+    <a class="secondary-button" href="#catalog">Все инструменты</a>
+   </div>
+   <div class="hero-note">Бесплатно · Без регистрации · Расчёты сохраняются в браузере</div>
+  </div>
+  <div class="hero-demo">
+   <div class="demo-top"><div class="demo-title">Пример расчёта прибыли</div><div class="demo-tag">Демонстрация</div></div>
+   <div class="demo-inputs">
+    <div class="demo-input"><div class="demo-label">Выручка</div><strong>250 000 ₽</strong></div>
+    <div class="demo-input"><div class="demo-label">Закупки</div><strong>120 000 ₽</strong></div>
+    <div class="demo-input"><div class="demo-label">Другие расходы</div><strong>25 000 ₽</strong></div>
+    <div class="demo-input"><div class="demo-label">Итого расходов</div><strong>145 000 ₽</strong></div>
+   </div>
+   <div class="demo-result">
+    <small>Чистая прибыль</small>
+    <div class="demo-number" id="demoProfit">105 000 ₽</div>
+    <div class="demo-foot"><span>Маржинальность</span><strong>42%</strong></div>
+   </div>
+   <div class="demo-foot"><span>Пример условных значений</span><span>BizCalc</span></div>
+  </div>
+ </section>
+
+ <section class="section reveal" id="catalog">
+  <div class="section-heading">
+   <div><div class="section-kicker">Инструменты</div><h2>Все калькуляторы</h2><p>Выбери нужный инструмент и переходи сразу к расчёту.</p></div>
+   <button class="text-button" id="catalogOpenAll">Открыть калькуляторы →</button>
+  </div>
+  <div class="catalog-filters">
+   <button class="filter-button active" data-filter="all">Все инструменты</button>
+   <button class="filter-button" data-filter="finance">Финансы</button>
+   <button class="filter-button" data-filter="trade">Торговля</button>
+   <button class="filter-button" data-filter="marketing">Реклама</button>
+  </div>
+  <div class="catalog-grid" id="catalogGrid">
+   <button class="tool-card" data-tool="profit" data-category="finance"><span class="tool-arrow">↗</span><div class="tool-icon">₽</div><h3>Прибыль</h3><p>Рассчитай чистую прибыль после всех расходов.</p></button>
+   <button class="tool-card" data-tool="margin" data-category="finance"><span class="tool-arrow">↗</span><div class="tool-icon">%</div><h3>Маржа</h3><p>Узнай долю прибыли в выручке.</p></button>
+   <button class="tool-card" data-tool="markup" data-category="trade"><span class="tool-arrow">↗</span><div class="tool-icon">↗</div><h3>Наценка</h3><p>Рассчитай цену продажи и прибыль с единицы.</p></button>
+   <button class="tool-card" data-tool="break" data-category="finance"><span class="tool-arrow">◎</span><div class="tool-icon">◎</div><h3>Безубыточность</h3><p>Определи выручку, необходимую для выхода в ноль.</p></button>
+   <button class="tool-card" data-tool="payback" data-category="finance"><span class="tool-arrow">↗</span><div class="tool-icon">◷</div><h3>Окупаемость</h3><p>Оцени срок возврата первоначальных вложений.</p></button>
+   <button class="tool-card" data-tool="batch" data-category="trade"><span class="tool-arrow">↗</span><div class="tool-icon">▦</div><h3>Стоимость партии</h3><p>Рассчитай стоимость закупки и единицы товара.</p></button>
+   <button class="tool-card" data-tool="discount" data-category="trade"><span class="tool-arrow">↗</span><div class="tool-icon">%</div><h3>Скидка</h3><p>Узнай цену после скидки и размер экономии.</p></button>
+   <button class="tool-card" data-tool="commission" data-category="trade"><span class="tool-arrow">↗</span><div class="tool-icon">−</div><h3>Комиссия</h3><p>Посчитай удержания и сумму после комиссии.</p></button>
+   <button class="tool-card" data-tool="vat" data-category="finance"><span class="tool-arrow">↗</span><div class="tool-icon">НДС</div><h3>НДС</h3><p>Начисли налог сверху или выдели его из суммы.</p></button>
+   <button class="tool-card" data-tool="roi" data-category="finance"><span class="tool-arrow">↗</span><div class="tool-icon">%</div><h3>Рентабельность</h3><p>Оцени прибыль относительно затрат.</p></button>
+   <button class="tool-card" data-tool="ads" data-category="marketing"><span class="tool-arrow">↗</span><div class="tool-icon">↗</div><h3>Реклама</h3><p>Рассчитай ROAS и стоимость привлечения клиента.</p></button>
+  </div>
+ </section>
+
+ <section class="section reveal" id="features">
+  <div class="section-heading"><div><div class="section-kicker">Рабочее пространство</div><h2>Не просто калькулятор</h2><p>Всё необходимое для работы с расчётами в одном месте.</p></div></div>
+  <div class="features-grid">
+   <article class="feature-card"><div class="feature-icon">↺</div><h3>История расчётов</h3><p>Все сохранённые результаты собраны в одном месте. Можно вернуться к старому расчёту.</p></article>
+   <article class="feature-card"><div class="feature-icon">✎</div><h3>Свои названия</h3><p>Подписывай расчёты, чтобы не путаться в товарах, проектах и задачах.</p></article>
+   <article class="feature-card"><div class="feature-icon">▤</div><h3>Статистика</h3><p>Смотри количество расчётов и активность за последние семь дней.</p></article>
+   <article class="feature-card"><div class="feature-icon">↓</div><h3>Экспорт данных</h3><p>Выгружай историю в CSV и открывай её в табличных редакторах.</p></article>
+  </div>
+ </section>
+
+ <section class="section reveal" id="knowledge">
+  <div class="section-heading"><div><div class="section-kicker">Разбираемся в цифрах</div><h2>База знаний</h2><p>Коротко о показателях, которые помогают понимать экономику бизнеса.</p></div></div>
+  <div class="knowledge-grid">
+   <article class="knowledge-card"><h3>Чистая прибыль</h3><p>Деньги, которые остаются после вычета себестоимости и прочих расходов из выручки. Это не то же самое, что общая сумма продаж.</p><div class="formula">Прибыль = Выручка − Себестоимость − Расходы</div></article>
+   <article class="knowledge-card"><h3>Маржинальность</h3><p>Показывает, какую долю выручки составляет прибыль. Помогает сравнивать эффективность продаж.</p><div class="formula">Маржа = Прибыль ÷ Выручка × 100%</div></article>
+   <article class="knowledge-card"><h3>Наценка</h3><p>Показывает, насколько цена продажи выше себестоимости товара. Не путай наценку с маржинальностью.</p><div class="formula">Наценка = (Цена − Себестоимость) ÷ Себестоимость × 100%</div></article>
+   <article class="knowledge-card"><h3>Точка безубыточности</h3><p>Уровень выручки, при котором доходы покрывают постоянные и переменные расходы. Прибыль в этой точке равна нулю.</p><div class="formula">Точка = Постоянные расходы ÷ (1 − Доля переменных расходов)</div></article>
+   <article class="knowledge-card"><h3>Срок окупаемости</h3><p>Ориентировочное время, за которое денежный поток компенсирует первоначальные вложения.</p><div class="formula">Окупаемость = Вложения ÷ Денежный поток за месяц</div></article>
+   <article class="knowledge-card"><h3>ROAS</h3><p>Показывает, сколько выручки приходится на каждый рубль рекламных расходов. Сам по себе ROAS не равен чистой прибыли.</p><div class="formula">ROAS = Выручка от рекламы ÷ Расходы на рекламу</div></article>
+  </div>
+ </section>
+
+ <section class="section reveal" id="faq">
+  <div class="section-heading"><div><div class="section-kicker">Вопросы и ответы</div><h2>Частые вопросы</h2><p>Основная информация о работе BizCalc.</p></div></div>
+  <div class="faq-list">
+   <details class="faq-item"><summary>BizCalc бесплатный?</summary><div class="faq-answer">Да. Все представленные калькуляторы доступны бесплатно. Для основных расчётов не нужна регистрация.</div></details>
+   <details class="faq-item"><summary>Где хранятся мои расчёты?</summary><div class="faq-answer">Сохранённые расчёты хранятся в локальном хранилище браузера на твоём устройстве. Очистка данных сайта или браузера может удалить их. Для дополнительной сохранности используй экспорт CSV.</div></details>
+   <details class="faq-item"><summary>Можно ли вернуться к старому расчёту?</summary><div class="faq-answer">Да. Открой историю, найди нужную запись и нажми «Открыть расчёт». Значения полей восстановятся в калькуляторе.</div></details>
+   <details class="faq-item"><summary>Насколько точны результаты?</summary><div class="faq-answer">Калькуляторы выполняют математические расчёты по введённым данным. Результат зависит от полноты и правильности исходных значений. Некоторые реальные бизнес-расходы могут потребовать отдельного учёта.</div></details>
+   <details class="faq-item"><summary>Можно ли использовать BizCalc на телефоне?</summary><div class="faq-answer">Да. Интерфейс адаптирован для мобильных устройств и компьютеров.</div></details>
+  </div>
+ </section>
+
+ <div class="cta-strip reveal">
+  <div><h2>Готов проверить свои цифры?</h2><p>Выбери инструмент и начни расчёт прямо сейчас.</p></div>
+  <button class="big-button" id="bottomStart">Открыть калькуляторы →</button>
+ </div>
+ <footer><span>© BizCalc</span><span>Бизнес-калькуляторы для повседневных расчётов</span></footer>
+</div>
+
+<!-- СТРАНИЦА КАЛЬКУЛЯТОРОВ -->
 <div id="calculatorPage">
+ <button class="back-home" id="backHomeFromCalc">← На главную</button>
  <div class="layout">
   <section class="left-column">
    <h1>Калькуляторы</h1>
    <p class="intro">Выбери инструмент и рассчитай нужные показатели.</p>
-
    <details class="mode-picker" id="modePicker">
     <summary id="modeSummary">Прибыль</summary>
     <div class="mode-options">
@@ -129,7 +356,6 @@ input:focus,select:focus{border-color:var(--blue)}
      <button class="mode" data-mode="ads">Реклама</button>
     </div>
    </details>
-
    <p id="description">Выручка минус себестоимость и прочие расходы.</p>
 
    <section class="panel" data-panel="profit">
@@ -139,35 +365,30 @@ input:focus,select:focus{border-color:var(--blue)}
     <div class="field"><label for="other">Прочие расходы, ₽</label><input id="other" type="number" value="25000"></div>
     <div class="result"><small>Чистая прибыль</small><div class="value" id="profitValue"></div><div class="hint" id="profitHint"></div></div>
    </section>
-
    <section class="panel" data-panel="margin" hidden>
     <h2>Маржинальность</h2><div class="sub">Доля прибыли в выручке</div>
     <div class="field"><label for="mRevenue">Выручка, ₽</label><input id="mRevenue" type="number" value="250000"></div>
     <div class="field"><label for="mProfit">Прибыль, ₽</label><input id="mProfit" type="number" value="75000"></div>
     <div class="result"><small>Маржинальность</small><div class="value" id="marginValue"></div><div class="hint">Прибыль относительно выручки</div></div>
    </section>
-
    <section class="panel" data-panel="markup" hidden>
     <h2>Наценка</h2><div class="sub">Цена продажи на основе себестоимости</div>
     <div class="field"><label for="purchase">Себестоимость единицы, ₽</label><input id="purchase" type="number" value="800"></div>
     <div class="field"><label for="markup">Наценка, %</label><input id="markup" type="number" value="40"></div>
     <div class="result"><small>Цена продажи</small><div class="value" id="salePrice"></div><div class="hint" id="markupHint"></div></div>
    </section>
-
    <section class="panel" data-panel="break" hidden>
     <h2>Точка безубыточности</h2><div class="sub">Выручка, необходимая для покрытия расходов</div>
     <div class="field"><label for="fixed">Постоянные расходы, ₽</label><input id="fixed" type="number" value="100000"></div>
     <div class="field"><label for="variable">Переменные расходы, % от выручки</label><input id="variable" type="number" value="55"></div>
     <div class="result"><small>Выручка для выхода в ноль</small><div class="value" id="breakValue"></div><div class="hint" id="breakHint"></div></div>
    </section>
-
    <section class="panel" data-panel="payback" hidden>
     <h2>Окупаемость</h2><div class="sub">Срок возврата вложений</div>
     <div class="field"><label for="investment">Первоначальные вложения, ₽</label><input id="investment" type="number" value="300000"></div>
     <div class="field"><label for="monthly">Денежный поток в месяц, ₽</label><input id="monthly" type="number" value="50000"></div>
     <div class="result"><small>Срок окупаемости</small><div class="value" id="paybackValue"></div><div class="hint">При сохранении текущего денежного потока</div></div>
    </section>
-
    <section class="panel" data-panel="batch" hidden>
     <h2>Стоимость партии</h2><div class="sub">Полная стоимость закупки и единицы товара</div>
     <div class="field"><label for="quantity">Количество единиц</label><input id="quantity" type="number" value="100"></div>
@@ -175,7 +396,6 @@ input:focus,select:focus{border-color:var(--blue)}
     <div class="field"><label for="delivery">Доставка и дополнительные расходы, ₽</label><input id="delivery" type="number" value="5000"></div>
     <div class="result"><small>Себестоимость одной единицы</small><div class="value" id="unitValue"></div><div class="hint" id="batchHint"></div></div>
    </section>
-
    <section class="panel" data-panel="discount" hidden>
     <h2>Расчёт скидки</h2><div class="sub">Цена после скидки и экономия</div>
     <div class="field"><label for="discountPrice">Исходная цена, ₽</label><input id="discountPrice" type="number" value="5000"></div>
@@ -183,7 +403,6 @@ input:focus,select:focus{border-color:var(--blue)}
     <div class="field"><label for="discountQty">Количество товаров</label><input id="discountQty" type="number" value="1"></div>
     <div class="result"><small>Цена после скидки</small><div class="value" id="discountValue"></div><div class="hint" id="discountHint"></div></div>
    </section>
-
    <section class="panel" data-panel="commission" hidden>
     <h2>Комиссия</h2><div class="sub">Сумма после удержания комиссии</div>
     <div class="field"><label for="commissionRevenue">Сумма продажи, ₽</label><input id="commissionRevenue" type="number" value="10000"></div>
@@ -191,7 +410,6 @@ input:focus,select:focus{border-color:var(--blue)}
     <div class="field"><label for="commissionExtra">Дополнительные расходы, ₽</label><input id="commissionExtra" type="number" value="200"></div>
     <div class="result"><small>Останется после удержаний</small><div class="value" id="commissionValue"></div><div class="hint" id="commissionHint"></div></div>
    </section>
-
    <section class="panel" data-panel="vat" hidden>
     <h2>Калькулятор НДС</h2><div class="sub">Начисление или выделение налога</div>
     <div class="field"><label for="vatAmount">Сумма, ₽</label><input id="vatAmount" type="number" value="10000"></div>
@@ -199,14 +417,12 @@ input:focus,select:focus{border-color:var(--blue)}
     <div class="field"><label for="vatMode">Тип расчёта</label><select id="vatMode"><option value="add">Начислить НДС сверху</option><option value="extract">Выделить НДС из суммы</option></select></div>
     <div class="result"><small>Сумма НДС</small><div class="value" id="vatValue"></div><div class="hint" id="vatHint"></div></div>
    </section>
-
    <section class="panel" data-panel="roi" hidden>
     <h2>Рентабельность затрат</h2><div class="sub">Прибыль относительно затрат</div>
     <div class="field"><label for="roiProfit">Прибыль, ₽</label><input id="roiProfit" type="number" value="30000"></div>
     <div class="field"><label for="roiCosts">Затраты, ₽</label><input id="roiCosts" type="number" value="100000"></div>
     <div class="result"><small>Рентабельность затрат</small><div class="value" id="roiValue"></div><div class="hint">Прибыль относительно затрат</div></div>
    </section>
-
    <section class="panel" data-panel="ads" hidden>
     <h2>Эффективность рекламы</h2><div class="sub">Возврат рекламных расходов и стоимость клиента</div>
     <div class="field"><label for="adsSpend">Расходы на рекламу, ₽</label><input id="adsSpend" type="number" value="15000"></div>
@@ -214,14 +430,12 @@ input:focus,select:focus{border-color:var(--blue)}
     <div class="field"><label for="adsClients">Количество клиентов</label><input id="adsClients" type="number" value="20"></div>
     <div class="result"><small>ROAS — возврат рекламных расходов</small><div class="value" id="adsValue"></div><div class="hint" id="adsHint"></div></div>
    </section>
-
    <div class="save-row">
     <input id="calculationLabel" maxlength="70" placeholder="Название расчёта (необязательно)">
     <button type="button" class="primary" id="saveCalculation">Сохранить расчёт</button>
    </div>
    <div class="save-status" id="saveStatus"></div>
   </section>
-
   <aside class="right-column">
    <section class="panel">
     <h2>Обзор</h2><div class="sub">Твоя статистика BizCalc</div>
@@ -233,7 +447,6 @@ input:focus,select:focus{border-color:var(--blue)}
     <h2 style="font-size:15px;margin-top:16px">Последние расчёты</h2>
     <div id="recentCalculations" class="recent-list"></div>
    </section>
-
    <section class="panel desktop-history">
     <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
      <div><h2>История</h2><div class="sub">Последние сохранённые расчёты</div></div>
@@ -243,7 +456,6 @@ input:focus,select:focus{border-color:var(--blue)}
    </section>
   </aside>
  </div>
-
  <section class="panel mobile-overview" style="margin-top:14px">
   <h2>Обзор</h2><div class="sub">Твоя статистика BizCalc</div>
   <div class="stats">
@@ -256,7 +468,9 @@ input:focus,select:focus{border-color:var(--blue)}
  </section>
 </div>
 
+<!-- ИСТОРИЯ -->
 <section class="panel history-page" id="historyPage">
+ <button class="back-home" id="backHomeFromHistory">← На главную</button>
  <h1>История расчётов</h1>
  <p class="intro">Все сохранённые расчёты и их основные результаты.</p>
  <input id="historySearch" class="history-search" type="search" placeholder="Поиск по названию, калькулятору или результату">
@@ -269,7 +483,7 @@ input:focus,select:focus{border-color:var(--blue)}
 </section>
 </main>
 
-<nav class="bottom-nav">
+<nav class="bottom-nav" id="bottomNav">
  <button type="button" id="navCalculator" class="active">Калькуляторы</button>
  <button type="button" id="navHistory">История</button>
 </nav>
@@ -313,30 +527,22 @@ const set=(id,value)=>$(id).textContent=value;
 function calculate(){
  let rev=num('revenue'),cost=num('costs'),other=num('other'),profit=rev-cost-other;
  set('profitValue',money(profit));set('profitHint','Маржинальность: '+(rev>0?pct(profit/rev*100):'—'));
-
  set('marginValue',num('mRevenue')>0?pct(num('mProfit')/num('mRevenue')*100):'—');
-
  let sale=num('purchase')*(1+num('markup')/100);
  set('salePrice',money(sale));set('markupHint','Прибыль с единицы: '+money(sale-num('purchase')));
-
  let contribution=1-num('variable')/100;
  set('breakValue',contribution>0?money(num('fixed')/contribution):'Не рассчитывается');
  set('breakHint',contribution>0?'Маржинальный доход: '+pct(contribution*100):'Переменные расходы должны быть меньше 100%');
-
  set('paybackValue',num('monthly')>0?(num('investment')/num('monthly')).toLocaleString('ru-RU',{maximumFractionDigits:1})+' мес.':'Не рассчитывается');
-
  let total=num('batchCost')+num('delivery');
  set('unitValue',num('quantity')>0?money(total/num('quantity')):'Не рассчитывается');
  set('batchHint','Полная стоимость партии: '+money(total));
-
  let discount=Math.min(100,Math.max(0,num('discountPercent')));
  set('discountValue',money(num('discountPrice')*(1-discount/100)));
  set('discountHint','Экономия на всей покупке: '+money(num('discountPrice')*discount/100*num('discountQty')));
-
  let fee=num('commissionRevenue')*num('commissionPercent')/100;
  set('commissionValue',money(num('commissionRevenue')-fee-num('commissionExtra')));
  set('commissionHint','Комиссия: '+money(fee));
-
  let va=num('vatAmount'),rate=Math.max(0,num('vatRate'));
  if($('vatMode').value==='extract'){
   let tax=rate>0?va*rate/(100+rate):0;
@@ -345,30 +551,17 @@ function calculate(){
   let tax=va*rate/100;
   set('vatValue',money(tax));set('vatHint','Итого с НДС: '+money(va+tax));
  }
-
  set('roiValue',num('roiCosts')>0?pct(num('roiProfit')/num('roiCosts')*100):'—');
-
  let spend=num('adsSpend'),adRev=num('adsRevenue'),clients=num('adsClients');
  set('adsValue',spend>0?(adRev/spend).toLocaleString('ru-RU',{maximumFractionDigits:2})+'×':'—');
  set('adsHint','Стоимость клиента: '+(clients>0?money(spend/clients):'—')+' · Рекламный результат: '+money(adRev-spend));
 }
-
-function currentMode(){
- return document.querySelector('.mode.active')?.dataset.mode||'profit';
-}
+function currentMode(){return document.querySelector('.mode.active')?.dataset.mode||'profit'}
 function currentOutput(mode){
- const ids={
-  profit:'profitValue',margin:'marginValue',markup:'salePrice',break:'breakValue',
-  payback:'paybackValue',batch:'unitValue',discount:'discountValue',
-  commission:'commissionValue',vat:'vatValue',roi:'roiValue',ads:'adsValue'
- };
+ const ids={profit:'profitValue',margin:'marginValue',markup:'salePrice',break:'breakValue',payback:'paybackValue',batch:'unitValue',discount:'discountValue',commission:'commissionValue',vat:'vatValue',roi:'roiValue',ads:'adsValue'};
  return $(ids[mode]).textContent;
 }
-function getInputs(){
- let v={};
- inputIds.forEach(id=>v[id]=$(id).value);
- return v;
-}
+function getInputs(){let v={};inputIds.forEach(id=>v[id]=$(id).value);return v}
 function detailsFor(mode,v){
  const fields={
   profit:[['revenue','Выручка'],['costs','Себестоимость и закупки'],['other','Прочие расходы']],
@@ -386,14 +579,12 @@ function detailsFor(mode,v){
  return (fields[mode]||[]).map(([id,label])=>{
   let value=v[id];
   if(id==='vatMode')value=value==='extract'?'Выделение НДС из суммы':'Начисление НДС сверху';
-  else if(id!=='adsClients'&&id!=='quantity'&&id!=='discountQty'&&id!=='markup'&&id!=='variable'&&id!=='discountPercent'&&id!=='commissionPercent'&&id!=='vatRate'){
-   value=money(Number(value)||0);
-  }else if(id==='markup'||id==='variable'||id==='discountPercent'||id==='commissionPercent'||id==='vatRate'){
-   value=(value||0)+'%';
-  }
+  else if(id!=='adsClients'&&id!=='quantity'&&id!=='discountQty'&&id!=='markup'&&id!=='variable'&&id!=='discountPercent'&&id!=='commissionPercent'&&id!=='vatRate')value=money(Number(value)||0);
+  else if(['markup','variable','discountPercent','commissionPercent','vatRate'].includes(id))value=(value||0)+'%';
   return {label,value:String(value)};
  });
 }
+function numFrom(v){let x=parseFloat(v);return Number.isFinite(x)?x:0}
 function conclusionFor(mode,v){
  switch(mode){
   case 'profit':return {label:'Чистая прибыль',value:money(numFrom(v.revenue)-numFrom(v.costs)-numFrom(v.other))};
@@ -409,7 +600,6 @@ function conclusionFor(mode,v){
   case 'ads':return {label:'ROAS — возврат рекламных расходов',value:$('adsValue').textContent,extra:$('adsHint').textContent};
  }
 }
-function numFrom(v){let x=parseFloat(v);return Number.isFinite(x)?x:0}
 function readHistory(){
  try{let x=JSON.parse(localStorage.getItem(historyKey)||'[]');return Array.isArray(x)?x:[]}
  catch(e){return []}
@@ -418,16 +608,10 @@ function writeHistory(items){
  try{localStorage.setItem(historyKey,JSON.stringify(items));return true}
  catch(e){set('saveStatus','Не удалось сохранить расчёт в браузере.');return false}
 }
-function fallbackLabel(item){
- return item.label||((names[item.mode]||'Расчёт')+' — '+(item.date?new Date(item.date).toLocaleDateString('ru-RU'):''));
-}
-function dateText(date){
- let d=new Date(date);
- return Number.isNaN(d.getTime())?'Дата неизвестна':d.toLocaleString('ru-RU');
-}
+function fallbackLabel(item){return item.label||((names[item.mode]||'Расчёт')+' — '+(item.date?new Date(item.date).toLocaleDateString('ru-RU'):''))}
+function dateText(date){let d=new Date(date);return Number.isNaN(d.getTime())?'Дата неизвестна':d.toLocaleString('ru-RU')}
 function getConclusion(item){
  if(item.conclusion)return item.conclusion;
- // Поддержка сохранений старой версии.
  let v=item.values||{};
  if(item.mode==='profit')return {label:'Чистая прибыль',value:money(numFrom(v.revenue)-numFrom(v.costs)-numFrom(v.other))};
  if(item.mode==='commission')return {label:'Останется после удержаний',value:item.result||'—'};
@@ -435,112 +619,62 @@ function getConclusion(item){
  if(item.mode==='ads')return {label:'ROAS — возврат рекламных расходов',value:item.result||'—'};
  return {label:'Результат расчёта',value:item.result||'—'};
 }
-function getDetails(item){
- if(Array.isArray(item.details))return item.details;
- // Для старых записей версии 1.3 восстанавливаем только использованные параметры.
- return detailsFor(item.mode||'profit',item.values||{});
-}
+function getDetails(item){if(Array.isArray(item.details))return item.details;return detailsFor(item.mode||'profit',item.values||{})}
 function save(){
  let mode=currentMode(),values=getInputs(),label=$('calculationLabel').value.trim();
  if(!label)label=(names[mode]||'Расчёт')+' — '+new Date().toLocaleDateString('ru-RU');
- let item={
-  id:String(Date.now())+'_'+Math.random().toString(36).slice(2,7),
-  mode,label,values,
-  details:detailsFor(mode,values),
-  conclusion:conclusionFor(mode,values),
-  result:currentOutput(mode),
-  date:new Date().toISOString()
- };
+ let item={id:String(Date.now())+'_'+Math.random().toString(36).slice(2,7),mode,label,values,details:detailsFor(mode,values),conclusion:conclusionFor(mode,values),result:currentOutput(mode),date:new Date().toISOString()};
  let items=readHistory();items.push(item);
- if(writeHistory(items)){
-  $('calculationLabel').value='';
-  set('saveStatus','Расчёт сохранён.');
-  refresh();
- }
+ if(writeHistory(items)){$('calculationLabel').value='';set('saveStatus','Расчёт сохранён.');refresh()}
 }
-
 function element(tag,cls,text){
- let e=document.createElement(tag);
- if(cls)e.className=cls;
- if(text!==undefined)e.textContent=text;
- return e;
+ let e=document.createElement(tag);if(cls)e.className=cls;if(text!==undefined)e.textContent=text;return e;
 }
 function renderHistory(){
- let items=readHistory(),list=$('historyList');
- list.textContent='';
+ let items=readHistory(),list=$('historyList');list.textContent='';
  let query=($('historySearch').value||'').toLocaleLowerCase('ru-RU');
  let filtered=items.slice().reverse().filter(item=>{
-  let conclusion=getConclusion(item);
-  let hay=[fallbackLabel(item),names[item.mode]||'',conclusion.label,conclusion.value,item.date].join(' ').toLocaleLowerCase('ru-RU');
-  return hay.includes(query);
+  let c=getConclusion(item);
+  return [fallbackLabel(item),names[item.mode]||'',c.label,c.value,item.date].join(' ').toLocaleLowerCase('ru-RU').includes(query);
  });
  set('historyStatus',items.length?'Всего сохранено: '+items.length:'История пока пуста.');
- if(!filtered.length){
-  list.appendChild(element('div','empty',items.length?'Ничего не найдено.':'Сохрани первый расчёт — он появится здесь.'));
-  return;
- }
+ if(!filtered.length){list.appendChild(element('div','empty',items.length?'Ничего не найдено.':'Сохрани первый расчёт — он появится здесь.'));return}
  filtered.forEach(item=>{
-  let card=element('article','history-item');
-  let top=element('div','history-top');
-  let info=element('div');
+  let card=element('article','history-item'),top=element('div','history-top'),info=element('div');
   info.appendChild(element('div','history-title',fallbackLabel(item)));
   info.appendChild(element('div','history-type',names[item.mode]||'Калькулятор'));
   info.appendChild(element('div','history-date',dateText(item.date)));
   top.appendChild(info);card.appendChild(top);
-
-  let conclusion=getConclusion(item);
-  let result=element('div','history-result');
-  result.appendChild(element('small',null,conclusion.label));
-  result.appendChild(element('strong',null,conclusion.value));
-  if(conclusion.extra)result.appendChild(element('div','hint',conclusion.extra));
-  card.appendChild(result);
-
+  let c=getConclusion(item),result=element('div','history-result');
+  result.appendChild(element('small',null,c.label));result.appendChild(element('strong',null,c.value));
+  if(c.extra)result.appendChild(element('div','hint',c.extra));card.appendChild(result);
   let details=getDetails(item);
   if(details.length){
    let grid=element('div','history-details');
-   details.forEach(d=>{
-    let box=element('div','detail');
-    box.appendChild(element('small',null,d.label));
-    box.appendChild(element('span',null,d.value));
-    grid.appendChild(box);
-   });
+   details.forEach(d=>{let box=element('div','detail');box.appendChild(element('small',null,d.label));box.appendChild(element('span',null,d.value));grid.appendChild(box)});
    card.appendChild(grid);
   }
-
-  let actions=element('div','history-actions');
-  let open=element('button',null,'Открыть расчёт');
-  open.type='button';
-  open.addEventListener('click',()=>{
+  let actions=element('div','history-actions'),open=element('button',null,'Открыть расчёт');
+  open.type='button';open.addEventListener('click',()=>{
    let values=item.values||{};
    inputIds.forEach(id=>{if(values[id]!==undefined)$(id).value=values[id]});
    $('calculationLabel').value=item.label||'';
-   selectMode(item.mode||'profit');
-   calculate();showPage('calculator');
-   window.scrollTo({top:0,behavior:'smooth'});
+   selectMode(item.mode||'profit');showPage('calculator');window.scrollTo({top:0,behavior:'smooth'});
   });
-  let del=element('button',null,'Удалить');
-  del.type='button';
-  del.addEventListener('click',()=>{
-   writeHistory(readHistory().filter(x=>x.id!==item.id));refresh();
-  });
-  actions.appendChild(open);actions.appendChild(del);card.appendChild(actions);
-  list.appendChild(card);
+  let del=element('button',null,'Удалить');del.type='button';
+  del.addEventListener('click',()=>{writeHistory(readHistory().filter(x=>x.id!==item.id));refresh()});
+  actions.appendChild(open);actions.appendChild(del);card.appendChild(actions);list.appendChild(card);
  });
 }
 function miniCard(item){
- let node=element('div','mini-item');
- node.appendChild(element('strong',null,fallbackLabel(item)));
- let c=getConclusion(item);
- node.appendChild(element('div','value',c.value));
- node.appendChild(element('div','hint',names[item.mode]+' · '+dateText(item.date)));
- return node;
+ let node=element('div','mini-item');node.appendChild(element('strong',null,fallbackLabel(item)));
+ let c=getConclusion(item);node.appendChild(element('div','value',c.value));
+ node.appendChild(element('div','hint',(names[item.mode]||'Калькулятор')+' · '+dateText(item.date)));return node;
 }
 function renderDashboard(){
- let items=readHistory(),week=Date.now()-7*86400000;
- let count=items.length;
- let recent=items.slice(-3).reverse();
+ let items=readHistory(),week=Date.now()-7*86400000,recent=items.slice(-3).reverse();
  let weekCount=items.filter(x=>new Date(x.date).getTime()>=week).length;
- ['statTotal','mobileStatTotal'].forEach(id=>set(id,count));
+ ['statTotal','mobileStatTotal'].forEach(id=>set(id,items.length));
  ['statWeek','mobileStatWeek'].forEach(id=>set(id,weekCount));
  ['recentCalculations','desktopRecent','mobileRecent'].forEach(id=>{
   let box=$(id);box.textContent='';
@@ -554,8 +688,22 @@ function selectMode(mode){
  document.querySelectorAll('[data-panel]').forEach(panel=>panel.hidden=panel.dataset.panel!==mode);
  $('modeSummary').textContent=names[mode]||'Выбрать калькулятор';
  $('description').textContent=descriptions[mode]||'';
- $('modePicker').open=false;
- calculate();
+ $('modePicker').open=false;calculate();
+}
+function showPage(page){
+ $('landingPage').style.display='none';
+ $('calculatorPage').style.display=page==='calculator'?'block':'none';
+ $('historyPage').classList.toggle('active',page==='history');
+ $('bottomNav').style.display=page==='home'?'none':'';
+ $('navCalculator').classList.toggle('active',page==='calculator');
+ $('navHistory').classList.toggle('active',page==='history');
+ if(page==='history')renderHistory();
+ if(page==='home'){$('landingPage').style.display='block';window.scrollTo({top:0,behavior:'smooth'})}
+ else window.scrollTo({top:0,behavior:'smooth'});
+}
+function openCalculator(mode){
+ if(mode)selectMode(mode);
+ showPage('calculator');
 }
 document.querySelectorAll('.mode').forEach(btn=>btn.addEventListener('click',()=>selectMode(btn.dataset.mode)));
 inputIds.forEach(id=>$(id).addEventListener('input',calculate));
@@ -563,38 +711,54 @@ $('vatMode').addEventListener('change',calculate);
 $('saveCalculation').addEventListener('click',save);
 $('historySearch').addEventListener('input',renderHistory);
 $('clearHistory').addEventListener('click',()=>{
- if(confirm('Удалить всю историю расчётов?')){
-  localStorage.removeItem(historyKey);refresh();
- }
+ if(confirm('Удалить всю историю расчётов?')){localStorage.removeItem(historyKey);refresh()}
 });
 $('exportHistory').addEventListener('click',()=>{
  let rows=[['Дата','Название','Калькулятор','Основной результат','Показатель','Значение']];
  readHistory().forEach(item=>{
-  let c=getConclusion(item);
-  rows.push([dateText(item.date),fallbackLabel(item),names[item.mode]||item.mode,c.label,c.value,'']);
+  let c=getConclusion(item);rows.push([dateText(item.date),fallbackLabel(item),names[item.mode]||item.mode,c.label,c.value,'']);
   getDetails(item).forEach(d=>rows.push(['','','','',d.label,d.value]));
  });
  let csv='\uFEFF'+rows.map(row=>row.map(x=>'"'+String(x??'').replace(/"/g,'""')+'"').join(';')).join('\r\n');
- let blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
- let url=URL.createObjectURL(blob),a=document.createElement('a');
- a.href=url;a.download='bizcalc-history.csv';a.click();
- URL.revokeObjectURL(url);
+ let blob=new Blob([csv],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');
+ a.href=url;a.download='bizcalc-history.csv';a.click();URL.revokeObjectURL(url);
 });
-function showPage(page){
- $('calculatorPage').style.display=page==='calculator'?'block':'none';
- $('historyPage').classList.toggle('active',page==='history');
- $('navCalculator').classList.toggle('active',page==='calculator');
- $('navHistory').classList.toggle('active',page==='history');
- if(page==='history')renderHistory();
-}
 $('navCalculator').addEventListener('click',()=>showPage('calculator'));
 $('navHistory').addEventListener('click',()=>showPage('history'));
 $('desktopOpenHistory').addEventListener('click',()=>showPage('history'));
+$('brandHome').addEventListener('click',()=>showPage('home'));
+$('backHomeFromCalc').addEventListener('click',()=>showPage('home'));
+$('backHomeFromHistory').addEventListener('click',()=>showPage('home'));
+['headerStart','heroStart','bottomStart','catalogOpenAll'].forEach(id=>$(id).addEventListener('click',()=>openCalculator()));
+$('headerHistory').addEventListener('click',()=>showPage('history'));
+document.querySelectorAll('[data-tool]').forEach(card=>card.addEventListener('click',()=>openCalculator(card.dataset.tool)));
+
+document.querySelectorAll('[data-filter]').forEach(button=>{
+ button.addEventListener('click',()=>{
+  let filter=button.dataset.filter;
+  document.querySelectorAll('[data-filter]').forEach(b=>b.classList.toggle('active',b===button));
+  document.querySelectorAll('[data-tool]').forEach(card=>{
+   card.style.display=filter==='all'||card.dataset.category===filter?'':'none';
+  });
+ });
+});
+
+// Плавное появление блоков при прокрутке.
+if('IntersectionObserver' in window){
+ const observer=new IntersectionObserver(entries=>{
+  entries.forEach(entry=>{
+   if(entry.isIntersecting){entry.target.classList.add('visible');observer.unobserve(entry.target)}
+  });
+ },{threshold:.12});
+ document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+}else{
+ document.querySelectorAll('.reveal').forEach(el=>el.classList.add('visible'));
+}
 
 selectMode('profit');
 calculate();
 refresh();
-showPage('calculator');
+showPage('home');
 });
 </script>
 </body>
